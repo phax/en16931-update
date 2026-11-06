@@ -129,14 +129,14 @@ item, **only when asked** (global rule), prefixed `[1.0.0 A<n>]`.
     with the UBL 2.5 marshaller.
   - **Done when:** either zero information loss (→ D2 stands) or a list of exactly what is lost
     (→ D3 fallback, plan effort for Phase 2 grows by ~2 sessions).
-- [ ] **A1 — Re-derive the delta** · `docs/update-rules.md`
+- [x] **A1 — Re-derive the delta** · `docs/update-rules.md` · **done 2026-11-06 — see §10; Q7–Q9 open**
   - Redo the §3 diff for **UBL Credit Note** and the CII column separately, and for every
     sub-identifier row; resolve each `(same)` and each notation-only difference (52 of 58 were
     notation in 4.0.0). Record each rule with BT, old path, new path, example.
   - Cross-check against 4.0.0 §4.4g (rows missing from the "new" table).
   - **Done when:** the list of rules is closed and every row of the 2026 table is classified:
     carried / rewritten / checked / new-not-emitted. A `MappingCoverageTest` analogue enforces it.
-- [ ] **A2 — Test inventory & 2026 validation story** — find out whether 2026 Schematron exists in
+- [x] **A2 — Test inventory & 2026 validation story** · **done 2026-11-06 — see §10** — find out whether 2026 Schematron exists in
   `phive-rules-en16931`; count usable input files; decide whether D6 needs file-by-file expected
   fixtures.
 
@@ -231,3 +231,32 @@ Consequences:
 - Not yet checked: that the real XSDs behind `ph-ubl21` and `ph-ubl25` accept the same inputs for
   *invalid-in-2.5-but-valid-in-2.1* corner cases — none found in the corpus, none expected (UBL 2.x minors are
   backward compatible), but A1 should grep the 2.5 release notes for removed/restricted elements.
+
+### A1 — rule list closed (2026-11-06) — three corrections to §3 and one new decision need
+
+Full rule list, evidence and the classification of all 299 IDs of the 2026 table: [update-rules.md](update-rules.md).
+
+| Correction to §3 | Detail |
+|------------------|--------|
+| R7 is **UBL only** | CII D16B already requires `ram:TypeCode` `916` for BG-24 (corpus: 53 × `916`). |
+| New rule **R9** | `cbc:UBLVersionID` 2.1 → 2.5 (found by reading the converters, not the tables). |
+| R5 and R7 share an ambiguity | A 2017 Credit Note reference without any type discriminator is BT-11 *or* an ID-only BG-24 → Q7. |
+| The 8 "checks" are **not edge cases** | Measured: 94 of 103 CII and 18 of 18 UBL files have at least one unscheme'd party identifier; "error, write nothing" (Q3) would reject virtually all real input. For CII the unscheme'd `ram:ID` is not a BT in 2026 at all. → Q8/Q9. |
+
+Open, blocking A5–A7 (not A2–A4): **Q7** Credit Note ID-only references, **Q8** default behaviour for C1,
+**Q9** the 2026 codes for the "Buyer assigned" / "Seller assigned" party identifier schemes. Details and
+options in `update-rules.md` §3. Q3 as answered stays valid for C2 (attachment filename: no corpus hit).
+
+### A2 — inventory and validation story (2026-11-06)
+
+- **No 2026 Schematron exists** in the newest release `phive-rules-en16931` 4.6.4 (checked: the jar's
+  `external/schematron/` stops at EN 16931 validation artefacts 1.3.17; the sources register no 2026 VESID).
+  The 4.6.5-SNAPSHOT is not available locally (only `.lastUpdated` markers), so I could not check it.
+  → The verification set of D6 stands as written; item (f) is "not available", and the README must say
+  that 2026 conformance of the output is **not** machine-verified beyond XSD and the per-rule tests.
+- **2017 Schematron is available** (1.3.x up to 1.3.17) → A9 can validate the *inputs* before the update.
+- **Input corpus** (copied as test resources, nothing downloaded): 103 CII D16B + 18 UBL 2.1 (13 Invoice,
+  3 Credit Note, plus 2 Invoice edge cases) = 121 files; 2 legacy ZUGFeRD files have no usable BT-24.
+  Gaps to fill by hand in A5–A8: UBL Credit Note with `ProjectReference`-candidate references (R5/Q7),
+  UBL header `cbc:Note` with `#code#` prefix (R3), `cbc:UBLVersionID` (R9), non-`VAT` `TaxScheme/ID` (R6),
+  UBL without `schemeID` variants (all corpus files have C1 hits already), `ext:UBLExtensions`.
