@@ -142,7 +142,7 @@ item, **only when asked** (global rule), prefixed `[1.0.0 A<n>]`.
 
 ### Phase 1 — Skeleton
 
-- [ ] **A3 — Project scaffolding**: parent pom, two modules, license header plugin, `.gitignore`,
+- [x] **A3 — Project scaffolding** · **done 2026-11-06**: parent pom, two modules, license header plugin, `.gitignore`,
   CI workflow copied from siblings, `UpdateVersion`, CLAUDE.md. Compiles, empty tests green.
 - [ ] **A4 — Core API**: `AbstractEN16931Updater`, rule-report type, `EN16931UpdateDispatcher`
   detection + routing (edition, syntax kind, already-2026 handling Q4), error cases (BT-24 missing,
@@ -260,3 +260,23 @@ options in `update-rules.md` §3. Q3 as answered stays valid for C2 (attachment 
   Gaps to fill by hand in A5–A8: UBL Credit Note with `ProjectReference`-candidate references (R5/Q7),
   UBL header `cbc:Note` with `#code#` prefix (R3), `cbc:UBLVersionID` (R9), non-`VAT` `TaxScheme/ID` (R6),
   UBL without `schemeID` variants (all corpus files have C1 hits already), `ext:UBLExtensions`.
+
+### Decisions Q7–Q9 (2026-11-06, after A1)
+
+- **Q7** agreed: `--cn-id-only-reference project|document|keep`, default `keep`.
+- **Q8** agreed: warn and leave by default, `--strict` = error.
+- **Q9** user: "meant literally" — the schemes "Buyer assigned" / "Seller assigned" are taken as the literal
+  scheme identifier text. Recorded as an **unverified working assumption**, off by default; the open
+  sub-questions (spelling, CII target, which BT gets which) are in `update-rules.md` §3. Insertion is limited
+  to BT-29 (Seller assigned) and BT-46 (Buyer assigned); everything else warns.
+- A2 note: no 2026 validation artefacts exist yet (confirmed by the user); the plan never relied on them.
+  A9 keeps using the 2017 Schematron on the inputs only.
+
+### A3 — scaffolding (2026-11-06)
+
+Parent pom `1.0.0-SNAPSHOT` (same BOM versions as the siblings: ph-commons 12.5.3, ph-ubl 10.2.1,
+ph-cii 4.1.3, en16931-basics 1.0.4), modules `en16931-update` and `en16931-update-cli`, `UpdateVersion` +
+test, picocli stub `EN16931UpdateCLI` (`--help`/`--version` only), license templates, maven workflow
+(copied from the siblings; the `release-to-slack` workflow was copied too - drop it if not wanted), README
+with News and noteworthy, CLAUDE.md. `mvn clean install` is green (1 test); the shaded jar runs.
+The existing `.gitignore` was replaced by the siblings' (superset of the old content).

@@ -47,13 +47,21 @@ CII/UBL tables say that the scheme "must be derived from ISO/IEC 6523, complemen
 in `en16931-basics` (`EEN16931ICDCode` has none) and are not in any document I have. **I will not
 invent them.** See Q8/Q9.
 
-## 3. Open questions raised by A1 (block A5–A7, not A2–A4)
+## 3. Decisions on the questions raised by A1
 
-| # | Question | Options |
-|---|----------|---------|
-| Q7 | **R5/R7 on Credit Notes.** A 2017 Credit Note `AdditionalDocumentReference` with no `DocumentTypeCode`/`DocumentType` is either a project reference (BT-11) or an ID-only supporting document (BG-24). One carrying `Attachment` or `DocumentDescription` is certainly BG-24; one carrying `DocumentType='ATS'` is BT-18. | (a) ID-only → leave untouched + warning (agreed Q3 wording; the output then has neither BT-11 nor a valid BG-24); (b) ID-only → BG-24 (add 916); (c) ID-only → BT-11 (matches what `en16931-cii2ubl` 2017 *emits* for BT-11); (d) option `--cn-id-only-reference project\|document\|keep`. **Recommend (d), default `keep`.** |
-| Q8 | **C1 default.** | (a) error, as agreed — rejects ~all inputs; (b) **warning, element left as it is** (CII `ram:ID` stays, UBL `cbc:ID` without scheme stays) and a summary count; (c) insert the "Seller/Buyer assigned" scheme once the codes are known; `--strict` switches to error. **Recommend (b) now, (c) as the 1.0.0 goal if you can give me the codes, `--strict` for (a).** |
-| Q9 | **Codes of the 2026 "Buyer assigned" / "Seller assigned" party identifier schemes** (and the target element for CII: `GlobalID` with that scheme?). | Please supply from the published CEN/TS 16931-3-2/-3-3:2026 or the 2026 code-list workbook; I can then add them to `en16931-basics` (where they belong) instead of this project. |
+| # | Question | Decision (2026-11-06) |
+|---|----------|-----------------------|
+| Q7 | R5/R7 on Credit Notes: ID-only `AdditionalDocumentReference` | **Agreed:** option `--cn-id-only-reference project\|document\|keep`, default **`keep`** (left untouched, warning). References with `Attachment` or `DocumentDescription` are BG-24 (R7 applies); `DocumentType='ATS'` is BT-18 (untouched). |
+| Q8 | C1 default | **Agreed:** warning, element left as it is, summary count; `--strict` turns C1 into an error. Inserting a scheme (below) is the 1.0.0 goal, switchable. |
+| Q9 | Scheme codes for "Buyer assigned" / "Seller assigned" | **Working assumption, NOT verified:** the values are meant **literally**, i.e. the scheme identifier is the text `Buyer assigned` resp. `Seller assigned`. They live in one place (a constant pair in `en16931-basics` once confirmed; a private constant here until then) and are **off by default** until confirmed. |
+
+Still open under Q9, because the tables do not say: (1) exact spelling and casing of the two literals;
+(2) for CII, whether the target of an unscheme'd `ram:ID` really is `ram:GlobalID` carrying the literal as
+`@schemeID` (the 2026 table maps BT-29/46/60/71 to `GlobalID` only); (3) **which of the two applies to
+which BT**. Only BT-29 (seller) and BT-46 (buyer) are self-evident; BT-60 (payee), BT-71 (deliver-to
+location) and the legal-registration IDs BT-30/47/61 have no obvious "assigner" and must not be guessed.
+Until (1)–(3) are answered, insertion is implemented for BT-29/BT-46 only, behind an option, and everything
+else follows the Q8 default (warn, leave).
 
 ## 4. Not rewritten, by design
 
