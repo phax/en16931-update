@@ -1,6 +1,6 @@
 # Plan: en16931-update 1.0.0
 
-Status: **PLAN ONLY — nothing implemented. Section 4 contains open questions that block Phase 1.** · Created 2026-11-06
+Status: **PLAN ONLY — nothing implemented. Q1–Q6 answered 2026-11-06 (section 4); Phase 0 may start.** · Created 2026-11-06
 
 ## 1. Goal
 
@@ -28,8 +28,7 @@ notation per the global rules.
 | `en16931-cii2ubl/docs/plan-4.0.0.md` | Traps already paid for: §4.2 (no namespace detection), §4.4b (cardinality widenings), §4.4c (JAXB materialises `@listID` defaults), §4.4d (BT-218 defect in the source table), §4.4g (the "new in 2026" table is not a complete diff). **Read before Phase 2.** |
 | `en16931-ubl2cii/…/UBLToCIIDispatcher` | Template for the dispatcher: detect document type + edition, route, write. |
 | `en16931-purifier` | Closest architectural precedent: same-syntax in/out, one class per (edition × syntax kind), `EN16931Purifiers` lookup on top of the data-only basics enums. |
-| Both siblings' test corpora | ~100 CII D16B files (EN examples, XRechnung 1.2.2 / 2.0.0 / 3.0.2, issue cases), ~17 UBL 2.1 files (Peppol + edge cases) — the input corpus for free. |
-| `en16931-cii2ubl` + `en16931-ubl2cii` (2026 paths) | **A test oracle** — see D6. |
+| Both siblings' test corpora | ~100 CII D16B files (EN examples, XRechnung 1.2.2 / 2.0.0 / 3.0.2, issue cases), ~17 UBL 2.1 files (Peppol + edge cases) — the input corpus, copied as test resources. |
 
 ## 3. Measured scope of the 2017→2026 delta
 
@@ -64,20 +63,18 @@ emitted by the updater**. A 2017 document has no source data for them.
 or rules. No 2026 Schematron was available when 4.0.0 was written; check whether
 `phive-rules-en16931` now ships one (it decides how strong the validation story in §7 can be).
 
-## 4. Open questions — blocking
+## 4. Answered questions (2026-11-06)
 
-Per `truth.md`: asked together, no silent defaults. My recommendation is first in each.
+| # | Question | Answer |
+|---|----------|--------|
+| Q1 | Preserve or purify? | **Preserve everything** schema-valid in the input (XRechnung extras, `PaymentChannelCode`, UBL extensions, attachments). Purification stays the job of `en16931-purifier`. |
+| Q2 | BT-24 suffix (82 of 103 corpus files carry `#compliant#…`) | **Replace only the `urn:cen.eu:en16931:2017` prefix**, keep the suffix, warn that the CIUS is not 2026-aware; `--customization-id` / `--profile-id` overrides. |
+| Q3 | Missing mandatory scheme IDs (8 checks) and ambiguous R5 | **Error + no output** by default; `--lenient` downgrades to a warning and leaves the element untouched. R5: move only when unambiguous, otherwise warn. |
+| Q4 | Input already EN 2026? | **Skip** (warn, no output / unchanged). `--on-2026 copy\|skip\|fail` stays as the switch, default `skip`. |
+| Q5 | Names | `en16931-update` / `en16931-update-cli`, package `com.helger.en16931.update`, `1.0.0-SNAPSHOT`, repo `phax/en16931-update`. |
+| Q6 | Oracle dependencies | Both siblings are released, **but the updater does not depend on them** — not even in test scope. The commutativity oracle is dropped (see D6). |
 
-| # | Question | Options / recommendation |
-|---|----------|--------------------------|
-| Q1 | **Preserve or purify?** An in-place upgrade keeps everything schema-valid in the input (XRechnung extras, `PaymentChannelCode`, UBL extensions, attachments). | **Preserve** everything; purification stays the job of `en16931-purifier` (CLI flag `--purify` can chain it later). Alternative: output core-only. |
-| Q2 | **BT-24 suffix** — 82 of 103 corpus files carry `…2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0`. A 2026 CIUS id does not exist. | **Replace only the `urn:cen.eu:en16931:2017` prefix** and keep the suffix, with a warning that the CIUS is not 2026-aware; plus `--customization-id` / `--profile-id` overrides like the converters. Alternative: drop the suffix. |
-| Q3 | **Missing mandatory scheme IDs** (the 8 checks above) and ambiguous R5 (CN `AdditionalDocumentReference` has no discriminator for "project") | **Error + no output** by default; `--lenient` downgrades to warning and leaves the element untouched. R5: only move when unambiguous; otherwise warn. |
-| Q4 | **Input already EN 2026?** | **Skip, warn, copy unchanged** with `--on-2026 copy\|skip\|fail` (default `skip`). |
-| Q5 | **Artifact id and version** | `en16931-update` / `en16931-update-cli`, package `com.helger.en16931.update`, `1.0.0-SNAPSHOT`, repo `phax/en16931-update`. |
-| Q6 | **Oracle dependencies** — D6 needs `en16931-cii2ubl` and `en16931-ubl2cii` 4.x / 3.x in test scope. Are those released on Central, or only installed locally (SNAPSHOT)? | Released versions only, otherwise CI breaks. |
-
-## 5. Locked decisions (proposed — become locked when Q1–Q6 are answered)
+## 5. Locked decisions
 
 | # | Decision | Rationale |
 |---|----------|-----------|
@@ -86,7 +83,7 @@ Per `truth.md`: asked together, no silent defaults. My recommendation is first i
 | D3 | D2 is a **hypothesis to prove in Phase 0**, not an assumption. Fallback: old model in, field-by-field copy (the converter pattern). | JAXB silently drops content unknown to the model; a UBL 2.1 file read with the 2.5 model must lose nothing. |
 | D4 | Edition and syntax kind detected from BT-24 / root element via basics; `--en-version` style override like the siblings | Same reasoning as 4.0.0 D4; ~2% of the corpus has no usable BT-24 (legacy ZUGFeRD ids) |
 | D5 | Every rewrite R1–R8 and check is a **named rule with an ID** reported in the ErrorList/log (`info` for applied rewrites) | Users upgrading invoices need an audit trail |
-| D6 | **Commutativity oracle:** for every 2017 CII file *X*: `cii2ubl₂₀₂₆(update(X))` ≡ `update(cii2ubl₂₀₁₇(X))`; same for UBL→CII | No 2026 Schematron means XSD + XPath alone is weak. Two independently written, already tested converters verify the updater for ~120 files at no authoring cost. Differences are either updater bugs or genuine converter bugs — both worth finding. |
+| D6 | **No dependency on `en16931-cii2ubl` / `en16931-ubl2cii`**, also not in test scope. Verification instead: (a) XSD validity of every output, (b) XPath assertions per rule R1–R8 and per check, (c) a **preservation test**: every element of the input that is not touched by a rule is present unchanged in the output (this is what Q1 demands), (d) idempotence (D7), (e) the coverage guard (A10), (f) 2026 Schematron if A2 finds one | Keeps the artifact light and independent. The cost: no independent second implementation, so rule correctness rests on the mapping tables — hence (c) and the hand-written per-rule expectations in A1. |
 | D7 | Idempotence: `update(update(X))` = `update(X)` | Cheap, catches double rewrites (R3 prefix handling) |
 | D8 | No unmarshalling for detection (basics rule) | Correct model unknown at that point |
 
@@ -113,7 +110,8 @@ com.helger.en16931.update.ubl        UBL21InvoiceToUBL25Updater, UBL21CreditNote
 
 Dependencies: `en16931-basics`, `ph-commons`/`ph-xml`/`ph-jaxb`, `ph-cii-d25a`, `ph-ubl25`;
 D3 fallback additionally `ph-cii-d16b`, `ph-ubl21`. Test scope: `phive-rules-en16931` (validate
-the 2017 **inputs** and, if available, the 2026 outputs), `ph-cii-d16b`, `ph-ubl21`, both converters (Q6).
+the 2017 **inputs** and, if available, the 2026 outputs), `ph-cii-d16b`, `ph-ubl21` (to read inputs
+with the old model for the preservation test). No converter dependencies (D6).
 
 Naming rule from `behaviour.md`: public API change ⇒ News entry in `README.md` for the current
 `-SNAPSHOT` ("v1.0.0 - work in progress", one sentence per line).
@@ -125,7 +123,7 @@ item, **only when asked** (global rule), prefixed `[1.0.0 A<n>]`.
 
 ### Phase 0 — Prove or kill the premises (no production code)
 
-- [ ] **A0 — Round-trip premise test** · scratch test only
+- [x] **A0 — Round-trip premise test** · scratch test only · **done 2026-11-06, D2 stands — see §10**
   - Read all ~100 CII D16B files with the D25A marshaller and write them back; XML-diff against
     the original ignoring whitespace/ordering of namespace declarations. Same for the UBL 2.1 files
     with the UBL 2.5 marshaller.
@@ -161,10 +159,12 @@ item, **only when asked** (global rule), prefixed `[1.0.0 A<n>]`.
   idempotence (D7), `@listID` default trap (4.4c) on every `qdt:` code copied, `@format`
   preservation, extension content (Q1), huge-file smoke.
 
-### Phase 3 — Verification against the oracle
+### Phase 3 — Verification
 
-- [ ] **A9 — Commutativity tests (D6)** CII and UBL directions. Normalise before comparing
-  (whitespace, attribute order, known intentional differences listed in one place).
+- [ ] **A9 — Preservation test (D6c)** for CII and both UBL kinds: diff input vs output over the
+  whole corpus; the only differences allowed are those named by a rule R1–R8. Unexpected loss or
+  change fails the test. Also run `phive-rules-en16931` on the 2017 inputs to confirm the corpus is
+  itself conformant.
 - [ ] **A10 — Coverage guard**: every row of `en16931-2026-syntax.md` is classified in
   `update-rules.md`; test fails if a row is unclassified. Prevents the BT-122-1 miss.
 
@@ -184,7 +184,7 @@ item, **only when asked** (global rule), prefixed `[1.0.0 A<n>]`.
 | 0 Premises | 2 |
 | 1 Skeleton | 1–2 |
 | 2 Updaters | 3–4 |
-| 3 Oracle | 1–2 |
+| 3 Verification | 1–2 |
 | 4 CLI, docs | 1–2 |
 | **Total** | **~8–12 sessions** — about half of 4.0.0, because there is no 214-row port |
 
@@ -195,9 +195,39 @@ If A0 fails (D3 fallback), add ~2 sessions.
 | Risk | Impact | Mitigation |
 |------|--------|------------|
 | 2017 CN `AdditionalDocumentReference` cannot reliably be told from a project reference (R5) | Wrong move | Only move when unambiguous, warn otherwise (Q3) |
+| Preserve-everything (Q1) means unknown/extension content may collide with new 2026 elements | Invalid or misleading output | XSD validation of every output; A8 extension tests |
 | `#code#` note prefix (R3) misparsed | Text corruption | Strict leading-token regex, round-trip test, idempotence |
 | JAXB silently drops unknown content (D2) | Data loss | A0 diff test; validate on read |
-| No 2026 Schematron | Subtle wrong output | D6 oracle + XPath per rule + coverage guard |
+| No 2026 Schematron, no second implementation | Subtle wrong output | D6: XPath per rule, preservation test, idempotence, coverage guard; hand-derived expectations in A1 |
 | 2026 rules tighten something not visible in the mapping tables (code lists, BR rules) | Output "valid" but non-compliant | A2 research; document as known limitation in README |
 | Mapping tables contain source defects (BT-218 precedent) | Bug copied from the standard | Treat the tables as input to check, not oracle; the converters' known corrections apply |
-| Siblings are SNAPSHOT-only (Q6) | CI cannot resolve oracle | Pin released versions |
+
+## 10. Progress log and findings
+
+### A0 — round-trip premise (2026-11-06) — D2 confirmed
+
+Scratch harness (not in the repo): read with the **target** model (`CIID25ACrossIndustryInvoiceTypeMarshaller`,
+`UBL25Marshaller.invoice()/creditNote()`, schema validation on, collecting handler), write back, parse both
+sides with namespace aware DOM and compare element by element (QName sequence, attributes, trimmed text).
+
+| Corpus | Files | Read errors | Write failures | Identical | Differing |
+|--------|-------|-------------|----------------|-----------|-----------|
+| CII D16B read as D25A (EN examples, XRechnung 1.2.2 / 2.0.0 / 3.0.2, issue + technical cases) | 103 | 0 | 0 | 73 | 30 — **all** only `xsi:schemaLocation` on the root |
+| UBL 2.1 read as UBL 2.5 (Peppol Invoice + Credit Note, coverage and edge cases; 3 Credit Notes) | 18 | 0 | 0 | 18 | 0 |
+
+Consequences:
+
+- **No element, attribute value or text is lost or changed**, no element is reordered, and no JAXB schema
+  default (the `@listID` trap of 4.4c) is *written* — it only shows up through getters. The D3 fallback
+  (old model in, field-by-field copy) is **not needed**.
+- `xsi:schemaLocation` is dropped by JAXB. Harmless (it was a relative path to the D16B XSD and would be
+  wrong for 2026 anyway) — record it as an intentional, documented difference in the preservation test (A9).
+- Negative probe: an unknown element and an unknown attribute in a UBL file make `read` return `null`
+  (cvc errors). So **reading is strict**: a 2017 input that is not valid against the 2026 XSD is rejected
+  with an ErrorList entry rather than silently repaired. This is the desired behaviour for Q1/Q3 but must be
+  documented in the README.
+- Limits of the evidence: only 3 Credit Notes and no UBL file with `ext:UBLExtensions` or embedded
+  attachments in the UBL corpus. A8 must add hand-written probes for these (Q1 "preserve everything").
+- Not yet checked: that the real XSDs behind `ph-ubl21` and `ph-ubl25` accept the same inputs for
+  *invalid-in-2.5-but-valid-in-2.1* corner cases — none found in the corpus, none expected (UBL 2.x minors are
+  backward compatible), but A1 should grep the 2.5 release notes for removed/restricted elements.
