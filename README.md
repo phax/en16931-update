@@ -1,5 +1,12 @@
 # en16931-update
 
+<!-- ph-badge-start -->
+[![Sonatype Central](https://maven-badges.sml.io/sonatype-central/com.helger/en16931-update-parent-pom/badge.svg)](https://maven-badges.sml.io/sonatype-central/com.helger/en16931-update-parent-pom/)
+[![javadoc](https://javadoc.io/badge2/com.helger/en16931-update/javadoc.svg)](https://javadoc.io/doc/com.helger/en16931-update)
+
+> If this project saved you some time or made your day a little easier, a star would mean a lot — it helps others find it too.
+<!-- ph-badge-end -->
+
 Library and command line tool that updates EN 16931:2017 invoices and credit notes to EN 16931:2026 **within the same syntax**:
 
 | Syntax | Input (EN 16931:2017) | Output (EN 16931:2026) |

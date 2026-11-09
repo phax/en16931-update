@@ -30,10 +30,10 @@ many C1 warnings until the schemes can be inserted. If you give me the exact val
 
 ## 3. Housekeeping / decisions for you
 
-- Keep or delete `.github/workflows/release-to-slack.yml` (copied from the siblings, needs the `SLACK_WEBHOOK_URL` secret).
-- `README.md` has no badge block yet (the sibling projects have the Sonatype/javadoc badges) — add it when the first release exists.
-- GitHub repo `phax/en16931-update` and the Maven Central coordinates `com.helger:en16931-update` are assumed in the poms;
-  nothing was created or released.
+- `.github/workflows/release-to-slack.yml` is kept (decided 2026-11-09). It needs the `SLACK_WEBHOOK_URL` secret in the GitHub repository.
+- The README has the Sonatype and javadoc badges (as the sibling projects); they show nothing until the first release.
+- The GitHub repo `phax/en16931-update` exists and is linked (decided 2026-11-09). Nothing is released yet; the Maven Central
+  coordinates are `com.helger:en16931-update`.
 - `en16931-basics`: once Q9 is answered, the two scheme literals belong there, not here.
 - `docs/en16931-2017-syntax.md` and `docs/en16931-2026-syntax.md` are copies from `en16931-cii2ubl` (commit 9960b78); the
   `MappingCoverageTest` depends on them. The `docs/00readme.txt` of cii2ubl still has the wrong "Draft versions" citation of the
