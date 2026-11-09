@@ -1,12 +1,11 @@
 # What is really left
 
-State as of 2026-11-09: plan items A0–A10 are done (see `plan-1.0.0.md` §10). All three updaters and the dispatcher exist and apply rules R1–R7, R9, C1, C2; the CLI is a stub.
+State as of 2026-11-09: plan items A0–A11 are done (see `plan-1.0.0.md` §10). All three updaters, the dispatcher and the CLI exist; only the README (A12) and the open questions below are left.
 
 ## 1. Work items (in order)
 
 | Item | What | Depends on |
 |------|------|------------|
-| **A11** | Real CLI: `-t/--target`, `--output-suffix` (default `-2026`), `--en-version`-style override, `--on-2026 copy\|skip\|fail` (default `skip`), `--strict`, `--cn-id-only-reference`, `--customization-id`, `--profile-id`, `--verbose`, `--disable-wildcard-expansion`, `source files 1..*`; `_test.sh`/`_test.cmd`; do not repeat the sibling NPE on unset optional values | A4–A7 |
 | **A12** | README (usage, rules table, limits), News and noteworthy, CLAUDE.md status, `@since 1.0.0` | all |
 
 ## 2. Prerequisites not done yet

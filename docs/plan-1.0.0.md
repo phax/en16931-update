@@ -170,7 +170,7 @@ item, **only when asked** (global rule), prefixed `[1.0.0 A<n>]`.
 
 ### Phase 4 — CLI and docs
 
-- [ ] **A11 — CLI**: `-t/--target`, `--output-suffix` (default `-2026`), `--en-version`-style
+- [x] **A11 — CLI**: `-t/--target`, `--output-suffix` (default `-2026`), `--en-version`-style
   override, `--on-2026`, `--strict`, `--cn-id-only-reference`, `--customization-id`, `--profile-id`, `--verbose`,
   `--disable-wildcard-expansion`, `source files 1..*` — mirroring the sibling options exactly.
   **Don't** repeat the sibling NPE with unset optional values (4.4f). `_test.sh` / `_test.cmd`.
@@ -418,3 +418,26 @@ fail as intended.
 `BT-110 vs BT-111`) were wrongly labelled CARRIED instead of NOTE — fixed (CARRIED 160, NOTE 14).
 Limits: "named in the code" is satisfied by a javadoc mention, so the guard proves the ID was *considered*, not that a test
 covers it — the per-rule tests of A5–A7 and the preservation test do that. 68 tests in total.
+
+### A11 — CLI (2026-11-09)
+
+`EN16931UpdateCLI` (picocli, shaded `en16931-update-cli-full.jar`): `-t/--target` (default `.`), `--output-suffix` (default
+`-2026`), `--source-edition 2017|2026` (forces the source edition; for documents without a usable BT-24), `--on-2026
+skip|copy|fail` (default `skip`), `--strict`, `--cn-id-only-reference keep|project|document` (default `keep`),
+`--customization-id`, `--profile-id`, `--verbose`, `--disable-wildcard-expansion`, source files/directories `1..*`
+(wildcards relative to the working directory, as in the sibling tools). `_test.sh` / `_test.cmd` added.
+
+Differences from the sibling CLIs, on purpose:
+- **Exit code**: 1 if at least one file failed, 0 otherwise (the siblings always return 0). A skipped already-2026 file and
+  an ignored non-existent file are not failures. A wrong enum value is picocli's exit code 2.
+- **Nothing half written**: the document is serialised and schema-validated in memory first; the file is only written if
+  that succeeded and the error list has no error. `--strict` with a failed check therefore writes nothing.
+- **The source is never overwritten** (e.g. same directory and an empty suffix).
+- Applied rewrites are logged as INFO (the audit trail), warnings as WARN, errors as ERROR. The siblings' mapping shows
+  infos as WARN because `IError.isFailure()` is true for them; this one uses the error level.
+- Optional values are only set when non-empty (the siblings' NPE of 4.4f).
+
+11 CLI tests (all three kinds, wildcard + suffix, directory input with one failing file, source-edition override, skip/copy/fail,
+strict, overrides, the credit note option incl. a wrong value, never overwriting the source, non-XML and missing files, help/
+version/missing arguments). **A test found a defect on the way:** the overwrite protection kept the source safe but did not count
+as a failure, so the exit code was 0 — fixed. 79 tests in total (68 library + 11 CLI).
