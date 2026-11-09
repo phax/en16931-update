@@ -62,6 +62,7 @@ public class UBL21CreditNoteToUBL25CreditNoteUpdater extends
   public UBL21CreditNoteToUBL25CreditNoteUpdater ()
   {}
 
+  @Override
   @NonNull
   public final EEN16931SyntaxKind getSyntaxKind ()
   {
@@ -101,10 +102,13 @@ public class UBL21CreditNoteToUBL25CreditNoteUpdater extends
                          EUpdateRule.R4,
                          "cac:PaymentMeans/cbc:PaymentDueDate",
                          "BT-9 is 0..1 but cac:PaymentMeans has the differing due date '" +
-                                                                 aPM.getPaymentDueDateValue () +
-                                                                 "' - it was left unchanged");
+                                                                aPM.getPaymentDueDateValue () +
+                                                                "' - it was left unchanged");
       }
-    reportApplied (aErrorList, EUpdateRule.R4, "cac:PaymentMeans/cbc:PaymentDueDate", "BT-9 '" + aMoved + "' moved to cbc:DueDate");
+    reportApplied (aErrorList,
+                   EUpdateRule.R4,
+                   "cac:PaymentMeans/cbc:PaymentDueDate",
+                   "BT-9 '" + aMoved + "' moved to cbc:DueDate");
   }
 
   /** @return <code>true</code> if the reference carries nothing but its identifier */
@@ -207,12 +211,15 @@ public class UBL21CreditNoteToUBL25CreditNoteUpdater extends
 
     // R1 - BT-24 and BT-23
     ret.setCustomizationID (getUpdatedSpecificationIdentifier (ret.getCustomizationIDValue (),
-                                                                "cbc:CustomizationID",
-                                                                aErrorList));
+                                                               "cbc:CustomizationID",
+                                                               aErrorList));
     if (getProfileID () != null)
     {
       ret.setProfileID (getProfileID ());
-      reportApplied (aErrorList, EUpdateRule.R1, "cbc:ProfileID", "BT-23 set to the configured value '" + getProfileID () + "'");
+      reportApplied (aErrorList,
+                     EUpdateRule.R1,
+                     "cbc:ProfileID",
+                     "BT-23 set to the configured value '" + getProfileID () + "'");
     }
 
     // R3
@@ -234,8 +241,10 @@ public class UBL21CreditNoteToUBL25CreditNoteUpdater extends
 
     // C1, C2
     checkPartyIdentifiers (aErrorList,
-                           ret.getAccountingSupplierParty () == null ? null : ret.getAccountingSupplierParty ().getParty (),
-                           ret.getAccountingCustomerParty () == null ? null : ret.getAccountingCustomerParty ().getParty (),
+                           ret.getAccountingSupplierParty () == null ? null : ret.getAccountingSupplierParty ()
+                                                                                 .getParty (),
+                           ret.getAccountingCustomerParty () == null ? null : ret.getAccountingCustomerParty ()
+                                                                                 .getParty (),
                            ret.getPayeeParty (),
                            ret.getDelivery ());
     checkAttachmentFilenames (ret.getAdditionalDocumentReference (), aErrorList);

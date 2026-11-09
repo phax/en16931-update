@@ -46,8 +46,8 @@ import oasis.names.specification.ubl.schema.xsd.invoice_25.InvoiceType;
 import un.unece.uncefact.data.standard.cii.d25a.CrossIndustryInvoiceType;
 
 /**
- * Test class for class {@link EN16931UpdateDispatcher}. The update rules themselves are tested
- * with the updaters.
+ * Test class for class {@link EN16931UpdateDispatcher}. The update rules themselves are tested with
+ * the updaters.
  *
  * @author Philip Helger
  */
@@ -78,9 +78,9 @@ public final class EN16931UpdateDispatcherTest
   @Test
   public void testRouteAndWrite ()
   {
-    final Object [][] aCases = { { CII_2017, CrossIndustryInvoiceType.class },
-                                 { UBL_INVOICE_2017, InvoiceType.class },
-                                 { UBL_CREDIT_NOTE_2017, CreditNoteType.class } };
+    final Object [] [] aCases = { { CII_2017, CrossIndustryInvoiceType.class },
+                                  { UBL_INVOICE_2017, InvoiceType.class },
+                                  { UBL_CREDIT_NOTE_2017, CreditNoteType.class } };
     for (final Object [] aCase : aCases)
     {
       final ErrorList aErrorList = new ErrorList ();
@@ -88,7 +88,7 @@ public final class EN16931UpdateDispatcherTest
       _assertNoError (aErrorList);
       assertEquals (EUpdateStatus.UPDATED, aResult.getStatus ());
       assertTrue (aResult.hasDocument ());
-      assertSame ((Class <?>) aCase[1], aResult.getDocument ().getClass ());
+      assertSame (aCase[1], aResult.getDocument ().getClass ());
 
       // Writing validates against the 2026 schema
       final ByteArrayOutputStream aBAOS = new ByteArrayOutputStream ();
@@ -174,8 +174,7 @@ public final class EN16931UpdateDispatcherTest
   {
     final ErrorList aErrorList = new ErrorList ();
     assertEquals (EUpdateStatus.FAILED,
-                  new EN16931UpdateDispatcher ().update (new File ("src/test/resources/does-not-exist.xml"),
-                                                         aErrorList)
+                  new EN16931UpdateDispatcher ().update (new File ("src/test/resources/does-not-exist.xml"), aErrorList)
                                                 .getStatus ());
     assertTrue (aErrorList.containsAtLeastOneError ());
   }

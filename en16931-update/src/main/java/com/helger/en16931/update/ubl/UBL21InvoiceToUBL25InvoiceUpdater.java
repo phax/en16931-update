@@ -55,6 +55,7 @@ public class UBL21InvoiceToUBL25InvoiceUpdater extends AbstractUBL21ToUBL25Updat
   public UBL21InvoiceToUBL25InvoiceUpdater ()
   {}
 
+  @Override
   @NonNull
   public final EEN16931SyntaxKind getSyntaxKind ()
   {
@@ -80,12 +81,15 @@ public class UBL21InvoiceToUBL25InvoiceUpdater extends AbstractUBL21ToUBL25Updat
 
     // R1 - BT-24 and BT-23
     ret.setCustomizationID (getUpdatedSpecificationIdentifier (ret.getCustomizationIDValue (),
-                                                                "cbc:CustomizationID",
-                                                                aErrorList));
+                                                               "cbc:CustomizationID",
+                                                               aErrorList));
     if (getProfileID () != null)
     {
       ret.setProfileID (getProfileID ());
-      reportApplied (aErrorList, EUpdateRule.R1, "cbc:ProfileID", "BT-23 set to the configured value '" + getProfileID () + "'");
+      reportApplied (aErrorList,
+                     EUpdateRule.R1,
+                     "cbc:ProfileID",
+                     "BT-23 set to the configured value '" + getProfileID () + "'");
     }
 
     // R3
@@ -106,8 +110,10 @@ public class UBL21InvoiceToUBL25InvoiceUpdater extends AbstractUBL21ToUBL25Updat
 
     // C1, C2
     checkPartyIdentifiers (aErrorList,
-                           ret.getAccountingSupplierParty () == null ? null : ret.getAccountingSupplierParty ().getParty (),
-                           ret.getAccountingCustomerParty () == null ? null : ret.getAccountingCustomerParty ().getParty (),
+                           ret.getAccountingSupplierParty () == null ? null : ret.getAccountingSupplierParty ()
+                                                                                 .getParty (),
+                           ret.getAccountingCustomerParty () == null ? null : ret.getAccountingCustomerParty ()
+                                                                                 .getParty (),
                            ret.getPayeeParty (),
                            ret.getDelivery ());
     checkAttachmentFilenames (ret.getAdditionalDocumentReference (), aErrorList);

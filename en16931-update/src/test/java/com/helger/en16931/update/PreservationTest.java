@@ -45,10 +45,10 @@ import com.helger.en16931.update.XMLDiffer.EKind;
 
 /**
  * The preservation test (plan item A9, decision D6c): an update may only change what its rules
- * name. Every input of the corpus is updated and compared with the output element by element.
- * Every difference must be explained by an entry of the allow list below - which is tied to a rule -
- * and the number of differences of a rule must equal the number of rewrites the updater reported
- * for it. So nothing is lost silently, and nothing is reported without a change.
+ * name. Every input of the corpus is updated and compared with the output element by element. Every
+ * difference must be explained by an entry of the allow list below - which is tied to a rule - and
+ * the number of differences of a rule must equal the number of rewrites the updater reported for
+ * it. So nothing is lost silently, and nothing is reported without a change.
  *
  * @author Philip Helger
  */
@@ -72,26 +72,56 @@ public final class PreservationTest
   }
 
   private static final List <Allowed> ALLOWED = List.of (
-    // R1 BT-24
-    new Allowed (EUpdateRule.R1, EKind.TEXT_CHANGED, "/rsm:CrossIndustryInvoice\\[1\\]/rsm:ExchangedDocumentContext\\[1\\]/ram:GuidelineSpecifiedDocumentContextParameter\\[\\d+\\]/ram:ID\\[1\\]"),
-    new Allowed (EUpdateRule.R1, EKind.TEXT_CHANGED, UBL_ROOT + "/cbc:CustomizationID\\[1\\]"),
-    // R2 BT-10
-    new Allowed (EUpdateRule.R2, EKind.ELEMENT_LOST, CII_AGREEMENT + "/ram:BuyerReference\\[\\d+\\]"),
-    new Allowed (EUpdateRule.R2, EKind.ELEMENT_ADDED, CII_AGREEMENT + "/ram:BuyerReferenceID\\[\\d+\\]"),
-    new Allowed (EUpdateRule.R2, EKind.ELEMENT_LOST, UBL_ROOT + "/cbc:BuyerReference\\[\\d+\\]"),
-    new Allowed (EUpdateRule.R2, EKind.ELEMENT_ADDED, UBL_ROOT + "/cac:BuyerAssignedReference\\[\\d+\\]"),
-    // R3 BG-1 - the header notes only
-    new Allowed (EUpdateRule.R3, EKind.ELEMENT_LOST, UBL_ROOT + "/cbc:Note\\[\\d+\\]"),
-    new Allowed (EUpdateRule.R3, EKind.ELEMENT_ADDED, UBL_ROOT + "/cac:Annotation\\[\\d+\\]"),
-    // R4 BT-9 of the Credit Note
-    new Allowed (EUpdateRule.R4, EKind.ELEMENT_LOST, "/cn:CreditNote\\[1\\]/cac:PaymentMeans\\[\\d+\\]/cbc:PaymentDueDate\\[1\\]"),
-    new Allowed (EUpdateRule.R4, EKind.ELEMENT_ADDED, "/cn:CreditNote\\[1\\]/cbc:DueDate\\[1\\]"),
-    // R6 BT-32-2
-    new Allowed (EUpdateRule.R6, EKind.TEXT_CHANGED, UBL_ROOT + "/cac:AccountingSupplierParty\\[1\\]/cac:Party\\[1\\]/cac:PartyTaxScheme\\[\\d+\\]/cac:TaxScheme\\[1\\]/cbc:ID\\[1\\]"),
-    // R7 BG-24
-    new Allowed (EUpdateRule.R7, EKind.ELEMENT_ADDED, UBL_ROOT + "/cac:AdditionalDocumentReference\\[\\d+\\]/cbc:DocumentTypeCode\\[1\\]"),
-    // R9 UBL version
-    new Allowed (EUpdateRule.R9, EKind.TEXT_CHANGED, UBL_ROOT + "/cbc:UBLVersionID\\[1\\]"));
+                                                         // R1 BT-24
+                                                         new Allowed (EUpdateRule.R1,
+                                                                      EKind.TEXT_CHANGED,
+                                                                      "/rsm:CrossIndustryInvoice\\[1\\]/rsm:ExchangedDocumentContext\\[1\\]/ram:GuidelineSpecifiedDocumentContextParameter\\[\\d+\\]/ram:ID\\[1\\]"),
+                                                         new Allowed (EUpdateRule.R1,
+                                                                      EKind.TEXT_CHANGED,
+                                                                      UBL_ROOT + "/cbc:CustomizationID\\[1\\]"),
+                                                         // R2 BT-10
+                                                         new Allowed (EUpdateRule.R2,
+                                                                      EKind.ELEMENT_LOST,
+                                                                      CII_AGREEMENT + "/ram:BuyerReference\\[\\d+\\]"),
+                                                         new Allowed (EUpdateRule.R2,
+                                                                      EKind.ELEMENT_ADDED,
+                                                                      CII_AGREEMENT +
+                                                                                           "/ram:BuyerReferenceID\\[\\d+\\]"),
+                                                         new Allowed (EUpdateRule.R2,
+                                                                      EKind.ELEMENT_LOST,
+                                                                      UBL_ROOT + "/cbc:BuyerReference\\[\\d+\\]"),
+                                                         new Allowed (EUpdateRule.R2,
+                                                                      EKind.ELEMENT_ADDED,
+                                                                      UBL_ROOT +
+                                                                                           "/cac:BuyerAssignedReference\\[\\d+\\]"),
+                                                         // R3 BG-1 - the header notes only
+                                                         new Allowed (EUpdateRule.R3,
+                                                                      EKind.ELEMENT_LOST,
+                                                                      UBL_ROOT + "/cbc:Note\\[\\d+\\]"),
+                                                         new Allowed (EUpdateRule.R3,
+                                                                      EKind.ELEMENT_ADDED,
+                                                                      UBL_ROOT + "/cac:Annotation\\[\\d+\\]"),
+                                                         // R4 BT-9 of the Credit Note
+                                                         new Allowed (EUpdateRule.R4,
+                                                                      EKind.ELEMENT_LOST,
+                                                                      "/cn:CreditNote\\[1\\]/cac:PaymentMeans\\[\\d+\\]/cbc:PaymentDueDate\\[1\\]"),
+                                                         new Allowed (EUpdateRule.R4,
+                                                                      EKind.ELEMENT_ADDED,
+                                                                      "/cn:CreditNote\\[1\\]/cbc:DueDate\\[1\\]"),
+                                                         // R6 BT-32-2
+                                                         new Allowed (EUpdateRule.R6,
+                                                                      EKind.TEXT_CHANGED,
+                                                                      UBL_ROOT +
+                                                                                          "/cac:AccountingSupplierParty\\[1\\]/cac:Party\\[1\\]/cac:PartyTaxScheme\\[\\d+\\]/cac:TaxScheme\\[1\\]/cbc:ID\\[1\\]"),
+                                                         // R7 BG-24
+                                                         new Allowed (EUpdateRule.R7,
+                                                                      EKind.ELEMENT_ADDED,
+                                                                      UBL_ROOT +
+                                                                                           "/cac:AdditionalDocumentReference\\[\\d+\\]/cbc:DocumentTypeCode\\[1\\]"),
+                                                         // R9 UBL version
+                                                         new Allowed (EUpdateRule.R9,
+                                                                      EKind.TEXT_CHANGED,
+                                                                      UBL_ROOT + "/cbc:UBLVersionID\\[1\\]"));
 
   /** Not a rule: the schema location of the root is dropped by JAXB (plan item A0) */
   private static final Pattern SCHEMA_LOCATION = Pattern.compile ("^/[^/]+\\[1\\]/@xsi:schemaLocation$");
@@ -102,7 +132,10 @@ public final class PreservationTest
   }
 
   /** @return The differences that no rule explains */
-  private static List <Diff> _check (final String sName, final Document aIn, final ErrorList aErrorList, final Document aOut)
+  private static List <Diff> _check (final String sName,
+                                     final Document aIn,
+                                     final ErrorList aErrorList,
+                                     final Document aOut)
   {
     final Map <EUpdateRule, Map <EKind, Integer>> aCounts = new EnumMap <> (EUpdateRule.class);
     final List <Diff> aUnexplained = new ArrayList <> ();
@@ -120,7 +153,8 @@ public final class PreservationTest
       if (aMatch == null)
         aUnexplained.add (aDiff);
       else
-        aCounts.computeIfAbsent (aMatch.rule (), k -> new EnumMap <> (EKind.class)).merge (aMatch.kind (), 1, Integer::sum);
+        aCounts.computeIfAbsent (aMatch.rule (), k -> new EnumMap <> (EKind.class))
+               .merge (aMatch.kind (), Integer.valueOf (1), Integer::sum);
     }
 
     // The reports and the differences must agree
@@ -129,21 +163,29 @@ public final class PreservationTest
       final Map <EKind, Integer> aOfRule = aCounts.getOrDefault (eRule, Map.of ());
       final long nApplied = countApplied (aErrorList, eRule);
       if (eRule == EUpdateRule.R1)
-        assertEquals (sName + " R1", 1, aOfRule.getOrDefault (EKind.TEXT_CHANGED, 0).intValue ());
+        assertEquals (sName + " R1", 1, aOfRule.getOrDefault (EKind.TEXT_CHANGED, Integer.valueOf (0)).intValue ());
       else
         if (eRule == EUpdateRule.R6 || eRule == EUpdateRule.R9)
-          assertEquals (sName + " " + eRule, nApplied, aOfRule.getOrDefault (EKind.TEXT_CHANGED, 0).intValue ());
+          assertEquals (sName + " " + eRule,
+                        nApplied,
+                        aOfRule.getOrDefault (EKind.TEXT_CHANGED, Integer.valueOf (0)).intValue ());
         else
           if (eRule == EUpdateRule.R7)
-            assertEquals (sName + " R7", nApplied, aOfRule.getOrDefault (EKind.ELEMENT_ADDED, 0).intValue ());
+            assertEquals (sName + " R7",
+                          nApplied,
+                          aOfRule.getOrDefault (EKind.ELEMENT_ADDED, Integer.valueOf (0)).intValue ());
           else
             if (eRule == EUpdateRule.C1 || eRule == EUpdateRule.C2 || eRule == EUpdateRule.R5)
               assertTrue (sName + " " + eRule + " must change nothing", aOfRule.isEmpty ());
             else
             {
               // R2, R3, R4: one element lost and one added per applied rewrite
-              assertEquals (sName + " " + eRule + " lost", nApplied, aOfRule.getOrDefault (EKind.ELEMENT_LOST, 0).intValue ());
-              assertEquals (sName + " " + eRule + " added", nApplied, aOfRule.getOrDefault (EKind.ELEMENT_ADDED, 0).intValue ());
+              assertEquals (sName + " " + eRule + " lost",
+                            nApplied,
+                            aOfRule.getOrDefault (EKind.ELEMENT_LOST, Integer.valueOf (0)).intValue ());
+              assertEquals (sName + " " + eRule + " added",
+                            nApplied,
+                            aOfRule.getOrDefault (EKind.ELEMENT_ADDED, Integer.valueOf (0)).intValue ());
             }
     }
     return aUnexplained;
@@ -152,7 +194,8 @@ public final class PreservationTest
   private static void _checkFile (final String sName, final Document aIn) throws Exception
   {
     final ErrorList aErrorList = new ErrorList ();
-    final UpdateResult aResult = new EN16931UpdateDispatcher ().setSourceEdition (EEN16931Edition.EN2017).update (aIn, aErrorList);
+    final UpdateResult aResult = new EN16931UpdateDispatcher ().setSourceEdition (EEN16931Edition.EN2017)
+                                                               .update (aIn, aErrorList);
     assertFalse (sName + ": " + aErrorList.getAllErrors (), aErrorList.containsAtLeastOneError ());
     final Document aOut = parse (writeToString (aResult.getDocument ()));
     final List <Diff> aUnexplained = _check (sName, aIn, aErrorList, aOut);
@@ -176,7 +219,8 @@ public final class PreservationTest
   {
     String sXML = _readString ("src/test/resources/external/ubl21/inv/peppol/base-example.xml");
     sXML = sXML.replace ("<cbc:CustomizationID>", "<cbc:UBLVersionID>2.1</cbc:UBLVersionID><cbc:CustomizationID>");
-    sXML = sXML.replaceFirst ("(</cbc:InvoiceTypeCode>)", "$1<cbc:Note>#AAI#Hello</cbc:Note><cbc:Note>plain</cbc:Note>");
+    sXML = sXML.replaceFirst ("(</cbc:InvoiceTypeCode>)",
+                              "$1<cbc:Note>#AAI#Hello</cbc:Note><cbc:Note>plain</cbc:Note>");
     sXML = sXML.replace ("<cac:AccountingSupplierParty>",
                          "<cac:AdditionalDocumentReference><cbc:ID>REF-1</cbc:ID></cac:AdditionalDocumentReference><cac:AccountingSupplierParty>");
     sXML = sXML.replaceFirst ("<cac:PartyLegalEntity>",
@@ -184,10 +228,16 @@ public final class PreservationTest
     final Document aIn = parse (sXML);
 
     final ErrorList aErrorList = new ErrorList ();
-    final Document aOut = parse (writeToString (new EN16931UpdateDispatcher ().update (aIn, aErrorList).getDocument ()));
+    final Document aOut = parse (writeToString (new EN16931UpdateDispatcher ().update (aIn, aErrorList)
+                                                                              .getDocument ()));
     assertTrue (_check ("hand-built invoice", aIn, aErrorList, aOut).isEmpty ());
     // Every rule of the Invoice really was exercised
-    for (final EUpdateRule eRule : new EUpdateRule [] { EUpdateRule.R1, EUpdateRule.R2, EUpdateRule.R3, EUpdateRule.R6, EUpdateRule.R7, EUpdateRule.R9 })
+    for (final EUpdateRule eRule : new EUpdateRule [] { EUpdateRule.R1,
+                                                        EUpdateRule.R2,
+                                                        EUpdateRule.R3,
+                                                        EUpdateRule.R6,
+                                                        EUpdateRule.R7,
+                                                        EUpdateRule.R9 })
       assertTrue (eRule.getID (), countApplied (aErrorList, eRule) > 0);
   }
 
@@ -195,11 +245,13 @@ public final class PreservationTest
   public void testHandBuiltCreditNoteWithEveryRule () throws Exception
   {
     String sXML = _readString ("src/test/resources/external/ubl21/cn/peppol/base-creditnote-correction.xml");
-    sXML = sXML.replace ("</cbc:PaymentMeansCode>", "</cbc:PaymentMeansCode><cbc:PaymentDueDate>2026-01-15</cbc:PaymentDueDate>");
+    sXML = sXML.replace ("</cbc:PaymentMeansCode>",
+                         "</cbc:PaymentMeansCode><cbc:PaymentDueDate>2026-01-15</cbc:PaymentDueDate>");
     final Document aIn = parse (sXML);
 
     final ErrorList aErrorList = new ErrorList ();
-    final Document aOut = parse (writeToString (new EN16931UpdateDispatcher ().update (aIn, aErrorList).getDocument ()));
+    final Document aOut = parse (writeToString (new EN16931UpdateDispatcher ().update (aIn, aErrorList)
+                                                                              .getDocument ()));
     assertTrue (_check ("hand-built credit note", aIn, aErrorList, aOut).isEmpty ());
     assertEquals (1, countApplied (aErrorList, EUpdateRule.R4));
   }
@@ -215,9 +267,10 @@ public final class PreservationTest
 
     // Change a text, change another text, lose an element, add an attribute
     for (final String [] aDamage : new String [] [] { { "(<cbc:Name>)[^<]*", "$1CHANGED" },
-                                                     { "<cbc:DocumentCurrencyCode>EUR<", "<cbc:DocumentCurrencyCode>USD<" },
-                                                     { "<cbc:Name>[^<]*</cbc:Name>", "" },
-                                                     { "(<cbc:DocumentCurrencyCode)>", "$1 listID=\"x\">" } })
+                                                      { "<cbc:DocumentCurrencyCode>EUR<",
+                                                        "<cbc:DocumentCurrencyCode>USD<" },
+                                                      { "<cbc:Name>[^<]*</cbc:Name>", "" },
+                                                      { "(<cbc:DocumentCurrencyCode)>", "$1 listID=\"x\">" } })
     {
       assertTrue (aDamage[0], Pattern.compile (aDamage[0]).matcher (sOut).find ());
       final Document aDamaged = parse (sOut.replaceFirst (aDamage[0], aDamage[1]));

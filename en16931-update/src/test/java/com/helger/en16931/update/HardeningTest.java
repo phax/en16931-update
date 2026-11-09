@@ -81,7 +81,10 @@ public final class HardeningTest
 
   // ---- XML attacks
 
-  private static void _assertRejected (final String sRootStart, final String sRootEnd, final String sDocType, final String sSecret) throws IOException
+  private static void _assertRejected (final String sRootStart,
+                                       final String sRootEnd,
+                                       final String sDocType,
+                                       final String sSecret) throws IOException
   {
     final String sPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                             sDocType +
@@ -115,10 +118,15 @@ public final class HardeningTest
   @Test
   public void testAnyDoctypeIsRejected () throws IOException
   {
-    // Control: a harmless internal entity that is defined. It would expand fine if DTDs were allowed,
+    // Control: a harmless internal entity that is defined. It would expand fine if DTDs were
+    // allowed,
     // so this proves that the rejection comes from the DOCTYPE and not from an undefined entity.
     final String sPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE foo [\n  <!ENTITY xxe \"harmless\">\n]>\n" +
-                            "<Invoice xmlns=\"" + UBL_NS_INVOICE + "\"><cbc:ID xmlns:cbc=\"" + UBL_NS_CBC + "\">&xxe;</cbc:ID></Invoice>";
+                            "<Invoice xmlns=\"" +
+                            UBL_NS_INVOICE +
+                            "\"><cbc:ID xmlns:cbc=\"" +
+                            UBL_NS_CBC +
+                            "\">&xxe;</cbc:ID></Invoice>";
     final ErrorList aErrorList = new ErrorList ();
     assertEquals (EUpdateStatus.FAILED, _update (_tempFile (sPayload), aErrorList).getStatus ());
     assertTrue (aErrorList.containsAtLeastOneError ());
@@ -192,7 +200,9 @@ public final class HardeningTest
 
   private static final String EXTENSIONS = "<ext:UBLExtensions xmlns:ext=\"" +
                                            EXT_NS +
-                                           "\"><ext:UBLExtension><cbc:ID xmlns:cbc=\"" + UBL_NS_CBC + "\">ext-1</cbc:ID><ext:ExtensionContent>" +
+                                           "\"><ext:UBLExtension><cbc:ID xmlns:cbc=\"" +
+                                           UBL_NS_CBC +
+                                           "\">ext-1</cbc:ID><ext:ExtensionContent>" +
                                            "<foo:Bar xmlns:foo=\"urn:example:foreign\" kind=\"test\"><foo:Child>a &amp; b</foo:Child><foo:Child>second</foo:Child></foo:Bar>" +
                                            "</ext:ExtensionContent></ext:UBLExtension></ext:UBLExtensions>";
 
@@ -223,7 +233,8 @@ public final class HardeningTest
       final UpdateResult aResult = _update (_tempFile (sXML), aErrorList);
       assertFalse (aErrorList.getAllErrors ().toString (), aErrorList.containsAtLeastOneError ());
       assertEquals (EUpdateStatus.UPDATED, aResult.getStatus ());
-      _assertExtensionsPreserved (parse (writeToString (aResult.getDocument ())), bInvoice ? "inv:Invoice" : "cn:CreditNote");
+      _assertExtensionsPreserved (parse (writeToString (aResult.getDocument ())),
+                                  bInvoice ? "inv:Invoice" : "cn:CreditNote");
     }
   }
 
@@ -261,7 +272,9 @@ public final class HardeningTest
     final String sUBL = "//cac:Attachment/cbc:EmbeddedDocumentBinaryObject";
     final List <byte []> aInBytes = _decodeAll (read (aUBL), sUBL);
     assertTrue (aInBytes.size () > 0);
-    final List <byte []> aOutBytes = _decodeAll (parse (writeToString (_updater (aUBL).update (aUBL, new ErrorList ()))), sUBL);
+    final List <byte []> aOutBytes = _decodeAll (parse (writeToString (_updater (aUBL).update (aUBL,
+                                                                                               new ErrorList ()))),
+                                                 sUBL);
     assertEquals (aInBytes.size (), aOutBytes.size ());
     for (int i = 0; i < aInBytes.size (); i++)
       assertTrue (java.util.Arrays.equals (aInBytes.get (i), aOutBytes.get (i)));
@@ -276,7 +289,14 @@ public final class HardeningTest
     {
       final Document aIn = read (aFile);
       final Document aOut = parse (writeToString (_updater (aFile).update (aFile, new ErrorList ())));
-      for (final String sAttr : new String [] { "listID", "listAgencyID", "listVersionID", "schemeID", "schemeAgencyID", "unitCode", "currencyID", "format" })
+      for (final String sAttr : new String [] { "listID",
+                                                "listAgencyID",
+                                                "listVersionID",
+                                                "schemeID",
+                                                "schemeAgencyID",
+                                                "unitCode",
+                                                "currencyID",
+                                                "format" })
         assertEquals (aFile.getPath () + " @" + sAttr, count (aIn, "//@" + sAttr), count (aOut, "//@" + sAttr));
     }
   }
@@ -299,7 +319,6 @@ public final class HardeningTest
 
     final File aFile = _tempFile (sXML);
     final ErrorList aErrorList = new ErrorList ();
-    final long nStart = System.nanoTime ();
     final UpdateResult aResult = _update (aFile, aErrorList);
     assertFalse (aErrorList.getAllErrors ().toString (), aErrorList.containsAtLeastOneError ());
     assertEquals (EUpdateStatus.UPDATED, aResult.getStatus ());

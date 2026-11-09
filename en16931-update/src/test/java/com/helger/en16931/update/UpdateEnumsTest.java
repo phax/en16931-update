@@ -18,8 +18,10 @@
 package com.helger.en16931.update;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -60,9 +62,9 @@ public final class UpdateEnumsTest
   @Test
   public void testStatus ()
   {
-    assertEquals (true, EUpdateStatus.UPDATED.hasDocument ());
-    assertEquals (true, EUpdateStatus.COPIED.hasDocument ());
-    assertEquals (false, EUpdateStatus.SKIPPED.hasDocument ());
-    assertEquals (false, EUpdateStatus.FAILED.hasDocument ());
+    assertTrue (EUpdateStatus.UPDATED.hasDocument ());
+    assertTrue (EUpdateStatus.COPIED.hasDocument ());
+    assertFalse (EUpdateStatus.SKIPPED.hasDocument ());
+    assertFalse (EUpdateStatus.FAILED.hasDocument ());
   }
 }

@@ -22,7 +22,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -30,9 +29,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 
 /**
- * Compares two XML documents element by element and reports every difference with a path. It is
- * the tool of the preservation test: an update may only change what its rules name, so everything
- * else has to show up here as <em>no difference</em>. Whitespace-only text, comments and namespace
+ * Compares two XML documents element by element and reports every difference with a path. It is the
+ * tool of the preservation test: an update may only change what its rules name, so everything else
+ * has to show up here as <em>no difference</em>. Whitespace-only text, comments and namespace
  * declarations are ignored. Children are paired by name and position among their same-named
  * siblings, which is exact as long as an update removes all or the last of a kind - the case for
  * every rule on the corpus.
@@ -147,8 +146,8 @@ public final class XMLDiffer
   }
 
   private static List <String> _commonOrder (final List <Element> aKids,
-                                              final Map <String, List <Element>> aInGroups,
-                                              final Map <String, List <Element>> aOutGroups)
+                                             final Map <String, List <Element>> aInGroups,
+                                             final Map <String, List <Element>> aOutGroups)
   {
     final List <String> ret = new ArrayList <> ();
     final Map <String, Integer> aSeen = new java.util.HashMap <> ();
@@ -157,7 +156,7 @@ public final class XMLDiffer
       final String sName = _name (aKid);
       if (!aInGroups.containsKey (sName) || !aOutGroups.containsKey (sName))
         continue;
-      final int nSeen = aSeen.merge (sName, 1, Integer::sum);
+      final int nSeen = aSeen.merge (sName, Integer.valueOf (1), Integer::sum).intValue ();
       if (nSeen <= Math.min (aInGroups.get (sName).size (), aOutGroups.get (sName).size ()))
         ret.add (sName);
     }

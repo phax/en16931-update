@@ -44,14 +44,14 @@ import un.unece.uncefact.data.standard.cii.d25a.udt.IDType;
 import un.unece.uncefact.data.standard.cii.d25a.udt.TextType;
 
 /**
- * Updates an EN 16931:2017 CII D16B document to an EN 16931:2026 CII D25A document. The document
- * is read with the D25A model, so everything it contains is preserved. The rules are documented
- * in <code>docs/update-rules.md</code>:
+ * Updates an EN 16931:2017 CII D16B document to an EN 16931:2026 CII D25A document. The document is
+ * read with the D25A model, so everything it contains is preserved. The rules are documented in
+ * <code>docs/update-rules.md</code>:
  * <ul>
  * <li>R1 - BT-24 (and an optional BT-23 override)</li>
  * <li>R2 - BT-10 <code>ram:BuyerReference</code> becomes <code>ram:BuyerReferenceID</code></li>
- * <li>C1 - party identifiers without a scheme identifier (BT-29-1, BT-30-1, BT-46-1, BT-47-1, BT-60-1,
- * BT-61-1, BT-71-1) - reported, never changed</li>
+ * <li>C1 - party identifiers without a scheme identifier (BT-29-1, BT-30-1, BT-46-1, BT-47-1,
+ * BT-60-1, BT-61-1, BT-71-1) - reported, never changed</li>
  * <li>C2 - attached documents without a filename - reported, never changed</li>
  * </ul>
  * R3, R4, R5, R6, R7 and R9 do not apply to CII.
@@ -69,6 +69,7 @@ public class CIID16BToCIID25AUpdater extends AbstractEN16931Updater <CIID16BToCI
   public CIID16BToCIID25AUpdater ()
   {}
 
+  @Override
   @NonNull
   public final EEN16931SyntaxKind getSyntaxKind ()
   {
@@ -94,9 +95,10 @@ public class CIID16BToCIID25AUpdater extends AbstractEN16931Updater <CIID16BToCI
         bAny2017 = true;
     if (getCustomizationID () != null || !bAny2017)
     {
-      // Only the first parameter - this is a configured value, or the source edition was set explicitly
+      // Only the first parameter - this is a configured value, or the source edition was set
+      // explicitly
       final String sOld = aContext.hasGuidelineSpecifiedDocumentContextParameterEntries () ? aContext.getGuidelineSpecifiedDocumentContextParameterAtIndex (0)
-                                                                                                  .getIDValue ()
+                                                                                                     .getIDValue ()
                                                                                            : null;
       _setFirstParameter (aContext, true, getUpdatedSpecificationIdentifier (sOld, sPath, aErrorList));
     }
@@ -122,8 +124,8 @@ public class CIID16BToCIID25AUpdater extends AbstractEN16931Updater <CIID16BToCI
                                           final boolean bGuideline,
                                           @NonNull final String sValue)
   {
-    final var aList = bGuideline ? aContext.getGuidelineSpecifiedDocumentContextParameter ()
-                                 : aContext.getBusinessProcessSpecifiedDocumentContextParameter ();
+    final var aList = bGuideline ? aContext.getGuidelineSpecifiedDocumentContextParameter () : aContext
+                                                                                                       .getBusinessProcessSpecifiedDocumentContextParameter ();
     if (aList.isEmpty ())
       aList.add (new DocumentContextParameterType ());
     aList.get (0).setID (sValue);
@@ -164,15 +166,18 @@ public class CIID16BToCIID25AUpdater extends AbstractEN16931Updater <CIID16BToCI
                           EUpdateRule.C1,
                           sPath + "/ram:ID",
                           sBTID +
-                                "-1: the identifier '" +
-                                aID.getValue () +
-                                "' is in ram:ID, which is not part of EN 16931:2026 - only ram:GlobalID with a scheme identifier is. It was left unchanged");
+                                             "-1: the identifier '" +
+                                             aID.getValue () +
+                                             "' is in ram:ID, which is not part of EN 16931:2026 - only ram:GlobalID with a scheme identifier is. It was left unchanged");
     for (final IDType aID : aParty.getGlobalID ())
       if (StringHelper.isEmpty (aID.getSchemeID ()))
         reportCheckFailure (aErrorList,
                             EUpdateRule.C1,
                             sPath + "/ram:GlobalID",
-                            sBTID + "-1: the identifier '" + aID.getValue () + "' has no scheme identifier, which is mandatory in EN 16931:2026. It was left unchanged");
+                            sBTID +
+                                                     "-1: the identifier '" +
+                                                     aID.getValue () +
+                                                     "' has no scheme identifier, which is mandatory in EN 16931:2026. It was left unchanged");
     if (sBTLegal != null && aParty.getSpecifiedLegalOrganization () != null)
     {
       final IDType aID = aParty.getSpecifiedLegalOrganization ().getID ();
@@ -181,9 +186,9 @@ public class CIID16BToCIID25AUpdater extends AbstractEN16931Updater <CIID16BToCI
                             EUpdateRule.C1,
                             sPath + "/ram:SpecifiedLegalOrganization/ram:ID",
                             sBTLegal +
-                                  "-1: the identifier '" +
-                                  aID.getValue () +
-                                  "' has no scheme identifier, which is mandatory in EN 16931:2026. It was left unchanged");
+                                                                              "-1: the identifier '" +
+                                                                              aID.getValue () +
+                                                                              "' has no scheme identifier, which is mandatory in EN 16931:2026. It was left unchanged");
     }
   }
 
@@ -220,16 +225,32 @@ public class CIID16BToCIID25AUpdater extends AbstractEN16931Updater <CIID16BToCI
       if (aAgreement != null)
       {
         _r2 (aAgreement, aErrorList);
-        _checkParty (aErrorList, PATH_AGREEMENT + "/ram:SellerTradeParty", aAgreement.getSellerTradeParty (), "BT-29", "BT-30");
-        _checkParty (aErrorList, PATH_AGREEMENT + "/ram:BuyerTradeParty", aAgreement.getBuyerTradeParty (), "BT-46", "BT-47");
+        _checkParty (aErrorList,
+                     PATH_AGREEMENT + "/ram:SellerTradeParty",
+                     aAgreement.getSellerTradeParty (),
+                     "BT-29",
+                     "BT-30");
+        _checkParty (aErrorList,
+                     PATH_AGREEMENT + "/ram:BuyerTradeParty",
+                     aAgreement.getBuyerTradeParty (),
+                     "BT-46",
+                     "BT-47");
         _c2 (aAgreement, aErrorList);
       }
       final HeaderTradeSettlementType aSettlement = aTransaction.getApplicableHeaderTradeSettlement ();
       if (aSettlement != null)
-        _checkParty (aErrorList, PATH_SETTLEMENT + "/ram:PayeeTradeParty", aSettlement.getPayeeTradeParty (), "BT-60", "BT-61");
+        _checkParty (aErrorList,
+                     PATH_SETTLEMENT + "/ram:PayeeTradeParty",
+                     aSettlement.getPayeeTradeParty (),
+                     "BT-60",
+                     "BT-61");
       final HeaderTradeDeliveryType aDelivery = aTransaction.getApplicableHeaderTradeDelivery ();
       if (aDelivery != null)
-        _checkParty (aErrorList, PATH_DELIVERY + "/ram:ShipToTradeParty", aDelivery.getShipToTradeParty (), "BT-71", null);
+        _checkParty (aErrorList,
+                     PATH_DELIVERY + "/ram:ShipToTradeParty",
+                     aDelivery.getShipToTradeParty (),
+                     "BT-71",
+                     null);
     }
     return ret;
   }
