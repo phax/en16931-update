@@ -1,13 +1,12 @@
 # What is really left
 
-State as of 2026-11-09: plan items A0–A4 are done (see `plan-1.0.0.md` §10). The dispatcher and three
-updater skeletons exist but apply **no rule yet** (BT-24 of the output is still the 2017 value); the CLI is a stub. Nothing is committed from this session.
+State as of 2026-11-09: plan items A0–A5 are done (see `plan-1.0.0.md` §10). The dispatcher and the CII
+updater (R1, R2, C1, C2) exist; the two UBL updaters are skeletons that apply **no rule yet**; the CLI is a stub. Nothing is committed from this session.
 
 ## 1. Work items (in order)
 
 | Item | What | Depends on |
 |------|------|------------|
-| **A5** | CII updater: R1, R2; C1/C2 checks | A4 |
 | **A6** | UBL Invoice updater: R1, R2, R3, R6, R7, R9; C1/C2 | A4 |
 | **A7** | UBL Credit Note updater: A6 plus R4, R5, `--cn-id-only-reference` | A4, A6 |
 | **A8** | Hardening: XXE/DTD test, idempotence, `ext:UBLExtensions` and attachment probes, `@listID` default trap, huge-file smoke | A5–A7 |

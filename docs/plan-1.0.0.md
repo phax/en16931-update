@@ -150,7 +150,7 @@ item, **only when asked** (global rule), prefixed `[1.0.0 A<n>]`.
 
 ### Phase 2 — Updaters (one syntax each, smallest first)
 
-- [ ] **A5 — CII**: R1, R2, R3-check, R6, R7 + the scheme-id checks; read D16B via D2, write D25A.
+- [x] **A5 — CII** · **done 2026-11-09**: R1, R2, R3-check, R6, R7 + the scheme-id checks; read D16B via D2, write D25A.
   Run over the whole CII corpus; XSD valid output; per-rule XPath assertions.
 - [ ] **A6 — UBL Invoice**: R1, R2, R3 (the `#code#` prefix parser — **careful**: only a leading
   `#…#` token; BT-127 line notes must not move), R6, R7 + checks.
@@ -296,3 +296,24 @@ forced edition on a legacy ZUGFeRD file, unsupported root, missing file, schema-
 settings handed over).
 The full corpus (103 CII + 18 UBL) was copied to `en16931-update/src/test/resources` (7.7 MB).
 A test caught one defect on the way: the skip warning passed a `null` rule (NPE).
+
+### A5 — CII updater (2026-11-09)
+
+Implemented in `cii.CIID16BToCIID25AUpdater`: **R1** (prefix `urn:cen.eu:en16931:2017` replaced, suffix kept
+with a warning; `--customization-id` / `--profile-id` overrides; a non-2017 BT-24 — only possible with a
+forced source edition, e.g. legacy ZUGFeRD — is replaced by the 2026 id with a warning naming the old value),
+**R2** (`ram:BuyerReference` → `ram:BuyerReferenceID`, no duplicate if the value is already there),
+**C1** (reported per occurrence: `ram:ID` under Seller/Buyer/Payee/ShipTo trade party, `ram:GlobalID` and
+`SpecifiedLegalOrganization/ram:ID` without scheme; element untouched; error if `strict`), **C2** (header
+attachment without `@filename`).
+
+- D25A has **both** `ram:BuyerReference` and `ram:BuyerReferenceID` — which is why a D16B document reads
+  into the D25A model at all.
+- Verification (D6): the whole 103-file corpus is updated and written (XSD-validated on write); BT-24, R2 and
+  the C1/C2 counts are checked against **independent XPath counts on the input document**, not against the
+  updater's own code. 7 tests in `CIID16BToCIID25AUpdaterTest`, 22 in total.
+- **Mutation probes** were run to prove the tests can fail: skipping R2, dropping the BT-24 suffix and
+  disabling the `GlobalID` check each make a test fail. The third one initially did *not* — no corpus file has
+  a `GlobalID` without scheme or an attachment without filename — so those two cases are covered by
+  hand-modified copies of `CII_example2.xml` (`testGlobalIDWithoutScheme`, `testC2MissingFilename`).
+- Not done on purpose: inserting the Q9 "assigned" schemes (still unverified, off by default). It is not in A5.
