@@ -155,7 +155,7 @@ item, **only when asked** (global rule), prefixed `[1.0.0 A<n>]`.
 - [x] **A6 — UBL Invoice** · **done 2026-11-09**: R1, R2, R3 (the `#code#` prefix parser — **careful**: only a leading
   `#…#` token; BT-127 line notes must not move), R6, R7 + checks.
 - [x] **A7 — UBL Credit Note** · **done 2026-11-09**: everything from A6 plus R4, R5.
-- [ ] **A8 — Hardening**: XXE/DTD protection test (ubl2cii has `XXEProtectionTest` to copy),
+- [x] **A8 — Hardening** · **done 2026-11-09**: XXE/DTD protection test (ubl2cii has `XXEProtectionTest` to copy),
   idempotence (D7), `@listID` default trap (4.4c) on every `qdt:` code copied, `@format`
   preservation, extension content (Q1), huge-file smoke.
 
@@ -356,3 +356,26 @@ Verification: the 3 corpus Credit Notes (R1–R3, R6, C1/C2 against independent 
 project reference, BT-18 `ATS`, typed and described references, a reference with more than an ID). **Ten mutation
 probes** (R4 ×3, R5 ×5, R7 described-reference detection, KEEP warning) are all caught. 41 tests in total.
 Still unverified assumption: UBL 2.5 `cbc:DueDate` sits between `IssueTime` and `TaxPointDate` (read from the XSD).
+
+### A8 — hardening (2026-11-09)
+
+`HardeningTest` (10 tests):
+- **XML attacks**: external entity (file) for CII, UBL Invoice and UBL Credit Note, external parameter entity,
+  billion laughs (30 s timeout) — all rejected, nothing leaks. A **control** with a harmless *defined* internal
+  entity is rejected too, which proves it is the DOCTYPE that is refused (`DOMReader`'s default) and not merely
+  an undefined entity. The rejection message is only "Failed to read ... as an XML document": the reason is not
+  surfaced by `DOMReader`. A caller that hands over its own `Node` is responsible for its own parser settings.
+- **Idempotence** over all 121 corpus files: running the updater on its own written output yields byte-identical
+  XML; the dispatcher skips the result.
+- **Defect found by this test:** the second pass replaced `urn:cen.eu:en16931:2026#compliant#...` by the bare
+  2026 identifier, i.e. **lost the CIUS suffix**. `getUpdatedSpecificationIdentifier` now returns an already-2026
+  value unchanged.
+- **`ext:UBLExtensions`** with foreign content (namespaces, attributes, repeated children, escaped text) is
+  preserved on Invoice and Credit Note.
+- **Attachments** are byte-identical (decoded) — 45 CII attachments of the corpus and the UBL coverage invoice.
+- **Attribute trap**: for every CII file the number of `@listID`, `@listAgencyID`, `@listVersionID`, `@schemeID`,
+  `@schemeAgencyID`, `@unitCode`, `@currencyID` and `@format` attributes is the same before and after, so no JAXB
+  schema default is ever written.
+- **Large document**: 4000 lines / 5.3 MB read, updated, written and validated in about 0.4 s.
+Two test inputs of mine were wrong at first (`ext:ID` must be `cbc:ID`; the base invoice has several lines) — the
+code was not at fault there. 51 tests in total.

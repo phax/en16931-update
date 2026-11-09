@@ -63,6 +63,8 @@ public final class UpdateTestHelper
         case "cn" -> "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2";
         case "cac" -> "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
         case "cbc" -> "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2";
+        case "ext" -> "urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2";
+        case "foo" -> "urn:example:foreign";
         default -> XMLConstants.NULL_NS_URI;
       };
     }
@@ -143,6 +145,22 @@ public final class UpdateTestHelper
                 EN16931UpdateDispatcher.writeDocument (aResult, aBAOS, aErrorList).isSuccess ());
     assertFalse (aErrorList.getAllErrors ().toString (), aErrorList.containsAtLeastOneError ());
     return parse (new String (aBAOS.toByteArray (), java.nio.charset.StandardCharsets.UTF_8));
+  }
+
+  /**
+   * @param aResult
+   *        The result of an updater
+   * @return The serialized result - writing validates against the 2026 schema.
+   */
+  public static String writeToString (final Serializable aResult)
+  {
+    assertNotNull (aResult);
+    final ErrorList aErrorList = new ErrorList ();
+    final ByteArrayOutputStream aBAOS = new ByteArrayOutputStream ();
+    assertTrue (aErrorList.getAllErrors ().toString (),
+                EN16931UpdateDispatcher.writeDocument (aResult, aBAOS, aErrorList).isSuccess ());
+    assertFalse (aErrorList.getAllErrors ().toString (), aErrorList.containsAtLeastOneError ());
+    return new String (aBAOS.toByteArray (), java.nio.charset.StandardCharsets.UTF_8);
   }
 
   /**

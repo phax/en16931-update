@@ -142,7 +142,8 @@ public abstract class AbstractEN16931UpdaterBase <IMPLTYPE extends AbstractEN169
    * Rule R1: determine the BT-24 value of the updated document. A configured
    * {@link #getCustomizationID() customization ID} wins. Otherwise the EN 16931:2017 prefix is
    * replaced by the EN 16931:2026 one, and a suffix like
-   * <code>#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0</code> is kept, with a warning. A value that
+   * <code>#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0</code> is kept, with a warning. A value that already is an EN
+   * 16931:2026 identifier is returned unchanged. A value that
    * is not an EN 16931:2017 identifier - only possible if the source edition was set explicitly - or a
    * missing value is replaced by the EN 16931:2026 identifier, with a warning.
    *
@@ -180,6 +181,12 @@ public abstract class AbstractEN16931UpdaterBase <IMPLTYPE extends AbstractEN169
                        sPath,
                        "The BT-24 suffix '" + sSuffix + "' was kept, but the CIUS it names is not EN 16931:2026 aware");
       return ret;
+    }
+
+    if (sOld != null && sOld.startsWith (sID2026))
+    {
+      // Already updated - updating twice must change nothing, so the suffix must stay as it is
+      return sOld;
     }
 
     reportWarning (aErrorList,
