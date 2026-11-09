@@ -14,5 +14,7 @@
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
+# limitations under the License.
+#
 
-java -jar target/en16931-update-cli-full.jar --verbose -t target/_out src/test/resources/cli/*-2017.xml
+java -jar target/en16931-update-cli-full.jar --verbose -t target/_out src/test/resources/external/cli/*-2017.xml

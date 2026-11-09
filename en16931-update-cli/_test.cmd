@@ -15,5 +15,6 @@
 @REM See the License for the specific language governing permissions and
 @REM limitations under the License.
 @REM
+
 @echo off
-java -jar target\en16931-update-cli-full.jar --verbose -t target\_out src\test\resources\cli\*-2017.xml
+java -jar target\en16931-update-cli-full.jar --verbose -t target\_out src\test\resources\external\cli\*-2017.xml
