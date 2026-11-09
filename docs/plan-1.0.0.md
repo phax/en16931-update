@@ -1,6 +1,6 @@
 # Plan: en16931-update 1.0.0
 
-Status: **PLAN ONLY — nothing implemented. Q1–Q6 answered 2026-11-06 (section 4); Phase 0 may start.** · Created 2026-11-06
+Status: **A0–A12 done 2026-11-09 — see section 10 for what was built; open points in `todo.md`.** · Created 2026-11-06
 
 ## 1. Goal
 
@@ -174,7 +174,7 @@ item, **only when asked** (global rule), prefixed `[1.0.0 A<n>]`.
   override, `--on-2026`, `--strict`, `--cn-id-only-reference`, `--customization-id`, `--profile-id`, `--verbose`,
   `--disable-wildcard-expansion`, `source files 1..*` — mirroring the sibling options exactly.
   **Don't** repeat the sibling NPE with unset optional values (4.4f). `_test.sh` / `_test.cmd`.
-- [ ] **A12 — Docs**: README (usage, CLI, rules table, limits), News and noteworthy
+- [x] **A12 — Docs**: README (usage, CLI, rules table, limits), News and noteworthy
   `v1.0.0 - work in progress`, CLAUDE.md, javadoc `@since 1.0.0`.
 
 ## 8. Estimate
@@ -441,3 +441,10 @@ Differences from the sibling CLIs, on purpose:
 strict, overrides, the credit note option incl. a wrong value, never overwriting the source, non-XML and missing files, help/
 version/missing arguments). **A test found a defect on the way:** the overwrite protection kept the source safe but did not count
 as a failure, so the exit code was 0 — fixed. 79 tests in total (68 library + 11 CLI).
+
+### A12 — documentation (2026-11-09)
+
+`README.md` (what it does and does not do, the rule table, the things users must know — C1 prevalence measured with the
+updater itself: **94 of 103 CII and 18 of 18 UBL files** —, CLI options and exit codes, library example that was compiled and
+run, build), the News and noteworthy entry `v1.0.0 - work in progress` (one sentence per line), CLAUDE.md status, `@since 1.0.0`
+on every public class. What is left is in `todo.md` and is decisions and housekeeping, not coding.

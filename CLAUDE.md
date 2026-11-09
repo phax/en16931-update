@@ -8,10 +8,9 @@ Updates an EN 16931:2017 invoice to EN 16931:2026 in the **same syntax** (CII D1
 Invoice and Credit Note). Java 17+ library plus picocli CLI. Not a converter and not a purifier: unknown and
 extension content is preserved.
 
-**Status:** plan items A0-A7 done: dispatcher, settings, reporting and all three updaters (CII, UBL Invoice, UBL Credit
-Note). Hardening (A8), the preservation test (A9) and the coverage guard (A10) are done. The CLI (A11) is done. Open: README (A12). The authoritative documents are
-`docs/plan-1.0.0.md` (decisions, action items, progress log) and `docs/update-rules.md` (the rules R1-R9,
-checks C1/C2 and the classification of every ID of the 2026 mapping table). Read both before changing code.
+**Status:** plan items A0-A12 are done: dispatcher, settings, reporting, the three updaters, the CLI, the
+preservation test, the coverage guard and the README. What is left is in `docs/todo.md` (open questions about the
+2026 "Buyer assigned" / "Seller assigned" schemes, R6 and R7 confirmations, housekeeping).
 
 ## Build & Test Commands
 

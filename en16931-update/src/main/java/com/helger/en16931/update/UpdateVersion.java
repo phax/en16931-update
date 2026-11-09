@@ -29,6 +29,7 @@ import com.helger.io.resource.ClassPathResource;
  * Contains application wide constants.
  *
  * @author Philip Helger
+ * @since 1.0.0
  */
 @Immutable
 public final class UpdateVersion
