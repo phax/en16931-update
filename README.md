@@ -113,3 +113,8 @@ v0.9.0 - 2026-11-09
 * Added the command line client `en16931-update-cli`.
   The exit code is 1 if a file failed.
   A file is only written if the result is valid against the 2026 schema.
+
+---
+
+My personal [Coding Styleguide](https://github.com/phax/meta/blob/master/CodingStyleguide.md) |
+It is appreciated if you star the GitHub project if you like it.
