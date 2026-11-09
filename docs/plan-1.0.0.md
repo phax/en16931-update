@@ -152,7 +152,7 @@ item, **only when asked** (global rule), prefixed `[1.0.0 A<n>]`.
 
 - [x] **A5 — CII** · **done 2026-11-09**: R1, R2, R3-check, R6, R7 + the scheme-id checks; read D16B via D2, write D25A.
   Run over the whole CII corpus; XSD valid output; per-rule XPath assertions.
-- [ ] **A6 — UBL Invoice**: R1, R2, R3 (the `#code#` prefix parser — **careful**: only a leading
+- [x] **A6 — UBL Invoice** · **done 2026-11-09**: R1, R2, R3 (the `#code#` prefix parser — **careful**: only a leading
   `#…#` token; BT-127 line notes must not move), R6, R7 + checks.
 - [ ] **A7 — UBL Credit Note**: everything from A6 plus R4, R5.
 - [ ] **A8 — Hardening**: XXE/DTD protection test (ubl2cii has `XXEProtectionTest` to copy),
@@ -317,3 +317,28 @@ attachment without `@filename`).
   a `GlobalID` without scheme or an attachment without filename — so those two cases are covered by
   hand-modified copies of `CII_example2.xml` (`testGlobalIDWithoutScheme`, `testC2MissingFilename`).
 - Not done on purpose: inserting the Q9 "assigned" schemes (still unverified, off by default). It is not in A5.
+
+### A6 — UBL Invoice updater (2026-11-09)
+
+`ubl.AbstractUBL21ToUBL25Updater` holds the rules that Invoice and Credit Note share (they work on the common
+`cac`/`cbc` parts, since the two document classes are unrelated), `UBL21InvoiceToUBL25InvoiceUpdater` applies
+**R1, R2, R3, R6, R7, R9, C1, C2**. The BT-24 logic moved into `AbstractEN16931UpdaterBase`
+(`getUpdatedSpecificationIdentifier`) and is shared with the CII updater, whose 7 tests stayed green.
+
+Decisions made while implementing (not in the earlier plan text):
+- **R3**: a note is `#code#text` only if the code is non-empty and contains no `#` or line break; `##text`,
+  `#text` without closing `#` and plain text keep the whole value as `AnnotationContent` and get no
+  `SubjectCode`. All header `cbc:Note` become annotations; payment-term and line notes are not touched.
+- **R6** applies to the **Seller** only (BT-32); other `PartyTaxScheme` entries are not touched. The old
+  value goes into the info message.
+- **R7** applies to a reference with neither `cbc:DocumentTypeCode` nor `cbc:DocumentType`; any existing
+  code (130 or other) is left alone. `listID="1001"` is emitted (open point 5 in `todo.md` — still to confirm).
+- **R9**: `2.1` → `2.5`; any other value is left alone with a warning; an absent element stays absent.
+- **R2** adds no duplicate if the value is already in a `cac:BuyerAssignedReference`.
+
+Verification: all 15 corpus invoices (13 Peppol/coverage + edge) are updated and written with XSD validation,
+every rule's effect is compared with **independent XPath counts on the input**. The corpus has no `#code#`
+note, no non-VAT Seller scheme, no `UBLVersionID`, no unscheme'd Payee / delivery location, so these are
+covered by hand-modified copies of `base-example.xml` (`testHandBuiltCases`, `testPayeeAndDeliveryIdentifiers`).
+**Nine mutation probes** (R2, R3 ×2, R6, R7 ×2, R9, C1 payee/legal entity/delivery) were run; one initially
+survived (Payee, no corpus data) and led to the extra test — all are caught now. 29 tests in total.

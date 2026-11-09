@@ -26,6 +26,7 @@ import com.helger.diagnostics.error.IError;
 import com.helger.diagnostics.error.SingleError;
 import com.helger.diagnostics.error.SingleErrorBuilder;
 import com.helger.diagnostics.error.list.ErrorList;
+import com.helger.en16931.basics.EEN16931Edition;
 
 /**
  * Base class of everything that updates EN 16931:2017 documents to EN 16931:2026: the settings
@@ -114,6 +115,62 @@ public abstract class AbstractEN16931UpdaterBase <IMPLTYPE extends AbstractEN169
     aTarget.setCustomizationID (m_sCustomizationID);
     aTarget.setProfileID (m_sProfileID);
     return aTarget;
+  }
+
+  /**
+   * Rule R1: determine the BT-24 value of the updated document. A configured
+   * {@link #getCustomizationID() customization ID} wins. Otherwise the EN 16931:2017 prefix is
+   * replaced by the EN 16931:2026 one, and a suffix like
+   * <code>#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0</code> is kept, with a warning. A value that
+   * is not an EN 16931:2017 identifier - only possible if the source edition was set explicitly - or a
+   * missing value is replaced by the EN 16931:2026 identifier, with a warning.
+   *
+   * @param sOld
+   *        The BT-24 value of the source document. May be <code>null</code>.
+   * @param sPath
+   *        The path of the element, for reporting. May be <code>null</code>.
+   * @param aErrorList
+   *        The error list to add to. May not be <code>null</code>.
+   * @return The value to write. Neither <code>null</code> nor empty.
+   */
+  @NonNull
+  protected final String getUpdatedSpecificationIdentifier (@Nullable final String sOld,
+                                                            @Nullable final String sPath,
+                                                            @NonNull final ErrorList aErrorList)
+  {
+    final String sID2017 = EEN16931Edition.EN2017.getSpecificationIdentifier ();
+    final String sID2026 = EEN16931Edition.EN2026.getSpecificationIdentifier ();
+
+    if (m_sCustomizationID != null)
+    {
+      reportApplied (aErrorList, EUpdateRule.R1, sPath, "BT-24 set to the configured value '" + m_sCustomizationID + "'");
+      return m_sCustomizationID;
+    }
+
+    if (sOld != null && sOld.startsWith (sID2017))
+    {
+      // Keep a CIUS suffix
+      final String sSuffix = sOld.substring (sID2017.length ());
+      final String ret = sID2026 + sSuffix;
+      reportApplied (aErrorList, EUpdateRule.R1, sPath, "BT-24 '" + sOld + "' changed to '" + ret + "'");
+      if (!sSuffix.isEmpty ())
+        reportWarning (aErrorList,
+                       EUpdateRule.R1,
+                       sPath,
+                       "The BT-24 suffix '" + sSuffix + "' was kept, but the CIUS it names is not EN 16931:2026 aware");
+      return ret;
+    }
+
+    reportWarning (aErrorList,
+                   EUpdateRule.R1,
+                   sPath,
+                   sOld == null || sOld.isEmpty () ? "BT-24 was missing and was set to '" + sID2026 + "'"
+                                                   : "BT-24 '" +
+                                                     sOld +
+                                                     "' is not an EN 16931:2017 identifier and was replaced by '" +
+                                                     sID2026 +
+                                                     "'");
+    return sID2026;
   }
 
   /**

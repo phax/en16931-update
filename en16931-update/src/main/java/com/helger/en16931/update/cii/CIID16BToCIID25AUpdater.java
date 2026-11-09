@@ -77,7 +77,6 @@ public class CIID16BToCIID25AUpdater extends AbstractEN16931Updater <CIID16BToCI
   private void _r1 (@NonNull final CrossIndustryInvoiceType aCII, @NonNull final ErrorList aErrorList)
   {
     final String sID2017 = EEN16931Edition.EN2017.getSpecificationIdentifier ();
-    final String sID2026 = EEN16931Edition.EN2026.getSpecificationIdentifier ();
     final String sPath = PATH_CONTEXT + "/ram:GuidelineSpecifiedDocumentContextParameter/ram:ID";
 
     ExchangedDocumentContextType aContext = aCII.getExchangedDocumentContext ();
@@ -88,44 +87,23 @@ public class CIID16BToCIID25AUpdater extends AbstractEN16931Updater <CIID16BToCI
     }
 
     // BT-24
-    if (getCustomizationID () != null)
+    boolean bAny2017 = false;
+    for (final DocumentContextParameterType aParam : aContext.getGuidelineSpecifiedDocumentContextParameter ())
+      if (aParam.getIDValue () != null && aParam.getIDValue ().startsWith (sID2017))
+        bAny2017 = true;
+    if (getCustomizationID () != null || !bAny2017)
     {
-      _setFirstParameter (aContext, true, getCustomizationID ());
-      reportApplied (aErrorList, EUpdateRule.R1, sPath, "BT-24 set to the configured value '" + getCustomizationID () + "'");
+      // Only the first parameter - this is a configured value, or the source edition was set explicitly
+      final String sOld = aContext.hasGuidelineSpecifiedDocumentContextParameterEntries () ? aContext.getGuidelineSpecifiedDocumentContextParameterAtIndex (0)
+                                                                                                  .getIDValue ()
+                                                                                           : null;
+      _setFirstParameter (aContext, true, getUpdatedSpecificationIdentifier (sOld, sPath, aErrorList));
     }
     else
     {
-      boolean bFound = false;
       for (final DocumentContextParameterType aParam : aContext.getGuidelineSpecifiedDocumentContextParameter ())
-      {
-        final String sOld = aParam.getIDValue ();
-        if (sOld != null && sOld.startsWith (sID2017))
-        {
-          // Keep a CIUS suffix like "#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0"
-          final String sSuffix = sOld.substring (sID2017.length ());
-          aParam.setID (sID2026 + sSuffix);
-          bFound = true;
-          reportApplied (aErrorList, EUpdateRule.R1, sPath, "BT-24 '" + sOld + "' changed to '" + sID2026 + sSuffix + "'");
-          if (!sSuffix.isEmpty ())
-            reportWarning (aErrorList,
-                           EUpdateRule.R1,
-                           sPath,
-                           "The BT-24 suffix '" + sSuffix + "' was kept, but the CIUS it names is not EN 16931:2026 aware");
-        }
-      }
-      if (!bFound)
-      {
-        // Only possible if the source edition was set explicitly
-        final String sOld = aContext.hasGuidelineSpecifiedDocumentContextParameterEntries () ? aContext.getGuidelineSpecifiedDocumentContextParameterAtIndex (0)
-                                                                                                    .getIDValue ()
-                                                                                             : null;
-        _setFirstParameter (aContext, true, sID2026);
-        reportWarning (aErrorList,
-                       EUpdateRule.R1,
-                       sPath,
-                       sOld == null ? "BT-24 was missing and was set to '" + sID2026 + "'"
-                                    : "BT-24 '" + sOld + "' is not an EN 16931:2017 identifier and was replaced by '" + sID2026 + "'");
-      }
+        if (aParam.getIDValue () != null && aParam.getIDValue ().startsWith (sID2017))
+          aParam.setID (getUpdatedSpecificationIdentifier (aParam.getIDValue (), sPath, aErrorList));
     }
 
     // BT-23 - only if configured, it is the same in both editions
