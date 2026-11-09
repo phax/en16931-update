@@ -107,7 +107,7 @@ This library is licensed under the Apache License Version 2.0.
 
 # News and noteworthy
 
-v1.0.0 - work in progress
+v0.9.0 - 2026-11-09
 * Initial release.
 * Added the updater from EN 16931:2017 to EN 16931:2026 for CII D16B to D25A, UBL 2.1 Invoice to UBL 2.5 Invoice and UBL 2.1 Credit Note to UBL 2.5 Credit Note.
 * Added the command line client `en16931-update-cli`.
