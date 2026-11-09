@@ -223,6 +223,17 @@ public abstract class AbstractUBL21ToUBL25Updater <IMPLTYPE extends AbstractUBL2
   }
 
   /**
+   * @param aRef
+   *        The document reference. May not be <code>null</code>.
+   * @return <code>true</code> if the reference has a description or an attachment, which only a
+   *         supporting document (BG-24) can have.
+   */
+  protected static boolean hasDescriptionOrAttachment (@NonNull final DocumentReferenceType aRef)
+  {
+    return !aRef.getDocumentDescription ().isEmpty () || aRef.getAttachment () != null;
+  }
+
+  /**
    * Rule R7: BG-24 gets the fixed document type code <code>916</code>.
    *
    * @param aRef

@@ -49,6 +49,15 @@ public final class UpdateEnumsTest
   }
 
   @Test
+  public void testCreditNoteIDOnlyReferenceHandling ()
+  {
+    for (final ECreditNoteIDOnlyReferenceHandling e : ECreditNoteIDOnlyReferenceHandling.values ())
+      assertSame (e, ECreditNoteIDOnlyReferenceHandling.getFromIDOrNull (e.getID ()));
+    assertNull (ECreditNoteIDOnlyReferenceHandling.getFromIDOrNull ("other"));
+    assertEquals (ECreditNoteIDOnlyReferenceHandling.KEEP, ECreditNoteIDOnlyReferenceHandling.DEFAULT);
+  }
+
+  @Test
   public void testStatus ()
   {
     assertEquals (true, EUpdateStatus.UPDATED.hasDocument ());

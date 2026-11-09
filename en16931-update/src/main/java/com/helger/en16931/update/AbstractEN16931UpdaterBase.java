@@ -45,6 +45,7 @@ public abstract class AbstractEN16931UpdaterBase <IMPLTYPE extends AbstractEN169
   private boolean m_bStrict = DEFAULT_STRICT;
   private String m_sCustomizationID;
   private String m_sProfileID;
+  private ECreditNoteIDOnlyReferenceHandling m_eCreditNoteIDOnlyReferenceHandling = ECreditNoteIDOnlyReferenceHandling.DEFAULT;
 
   protected AbstractEN16931UpdaterBase ()
   {}
@@ -101,6 +102,25 @@ public abstract class AbstractEN16931UpdaterBase <IMPLTYPE extends AbstractEN169
   }
 
   /**
+   * @return What to do with an ID-only <code>cac:AdditionalDocumentReference</code> of a UBL Credit
+   *         Note - it is only relevant there. Never <code>null</code>. The default is
+   *         {@link ECreditNoteIDOnlyReferenceHandling#DEFAULT}.
+   */
+  @NonNull
+  public final ECreditNoteIDOnlyReferenceHandling getCreditNoteIDOnlyReferenceHandling ()
+  {
+    return m_eCreditNoteIDOnlyReferenceHandling;
+  }
+
+  @NonNull
+  public final IMPLTYPE setCreditNoteIDOnlyReferenceHandling (@NonNull final ECreditNoteIDOnlyReferenceHandling eHandling)
+  {
+    ValueEnforcer.notNull (eHandling, "Handling");
+    m_eCreditNoteIDOnlyReferenceHandling = eHandling;
+    return thisAsT ();
+  }
+
+  /**
    * Copy the settings of this object to another one.
    *
    * @param aTarget
@@ -114,6 +134,7 @@ public abstract class AbstractEN16931UpdaterBase <IMPLTYPE extends AbstractEN169
     aTarget.setStrict (m_bStrict);
     aTarget.setCustomizationID (m_sCustomizationID);
     aTarget.setProfileID (m_sProfileID);
+    aTarget.setCreditNoteIDOnlyReferenceHandling (m_eCreditNoteIDOnlyReferenceHandling);
     return aTarget;
   }
 

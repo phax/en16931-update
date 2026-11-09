@@ -154,7 +154,7 @@ item, **only when asked** (global rule), prefixed `[1.0.0 A<n>]`.
   Run over the whole CII corpus; XSD valid output; per-rule XPath assertions.
 - [x] **A6 — UBL Invoice** · **done 2026-11-09**: R1, R2, R3 (the `#code#` prefix parser — **careful**: only a leading
   `#…#` token; BT-127 line notes must not move), R6, R7 + checks.
-- [ ] **A7 — UBL Credit Note**: everything from A6 plus R4, R5.
+- [x] **A7 — UBL Credit Note** · **done 2026-11-09**: everything from A6 plus R4, R5.
 - [ ] **A8 — Hardening**: XXE/DTD protection test (ubl2cii has `XXEProtectionTest` to copy),
   idempotence (D7), `@listID` default trap (4.4c) on every `qdt:` code copied, `@format`
   preservation, extension content (Q1), huge-file smoke.
@@ -342,3 +342,17 @@ note, no non-VAT Seller scheme, no `UBLVersionID`, no unscheme'd Payee / deliver
 covered by hand-modified copies of `base-example.xml` (`testHandBuiltCases`, `testPayeeAndDeliveryIdentifiers`).
 **Nine mutation probes** (R2, R3 ×2, R6, R7 ×2, R9, C1 payee/legal entity/delivery) were run; one initially
 survived (Payee, no corpus data) and led to the extra test — all are caught now. 29 tests in total.
+
+### A7 — UBL Credit Note updater (2026-11-09)
+
+`UBL21CreditNoteToUBL25CreditNoteUpdater` applies R1, R2, R3, R6, R9, C1, C2 through the shared base class and
+adds **R4**, **R5** and the R7 classification. New setting `ECreditNoteIDOnlyReferenceHandling`
+(`keep` default / `project` / `document`) in `AbstractEN16931UpdaterBase`, handed over by the dispatcher.
+Exact semantics are in `update-rules.md` (R4, R5 rows). In `project` mode a reference is moved only if it is the
+single ambiguous one, carries nothing but its ID and no `cac:ProjectReference` exists — otherwise it warns.
+
+Verification: the 3 corpus Credit Notes (R1–R3, R6, C1/C2 against independent XPath counts) and 11 hand-built cases
+(R4 single/differing/existing `cbc:DueDate`; R5/R7 in all three modes, several ambiguous references, an existing
+project reference, BT-18 `ATS`, typed and described references, a reference with more than an ID). **Ten mutation
+probes** (R4 ×3, R5 ×5, R7 described-reference detection, KEEP warning) are all caught. 41 tests in total.
+Still unverified assumption: UBL 2.5 `cbc:DueDate` sits between `IssueTime` and `TaxPointDate` (read from the XSD).

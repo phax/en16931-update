@@ -8,8 +8,8 @@ Updates an EN 16931:2017 invoice to EN 16931:2026 in the **same syntax** (CII D1
 Invoice and Credit Note). Java 17+ library plus picocli CLI. Not a converter and not a purifier: unknown and
 extension content is preserved.
 
-**Status:** plan items A0-A6 done: dispatcher, settings, reporting, the CII updater and the UBL Invoice updater. The UBL
-Credit Note updater is still a skeleton (A7). The authoritative documents are
+**Status:** plan items A0-A7 done: dispatcher, settings, reporting and all three updaters (CII, UBL Invoice, UBL Credit
+Note). Open: hardening (A8), preservation test (A9), coverage guard (A10), real CLI (A11), README (A12). The authoritative documents are
 `docs/plan-1.0.0.md` (decisions, action items, progress log) and `docs/update-rules.md` (the rules R1-R9,
 checks C1/C2 and the classification of every ID of the 2026 mapping table). Read both before changing code.
 

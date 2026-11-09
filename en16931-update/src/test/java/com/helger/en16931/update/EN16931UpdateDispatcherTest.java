@@ -197,7 +197,8 @@ public final class EN16931UpdateDispatcherTest
   {
     final EN16931UpdateDispatcher aDispatcher = new EN16931UpdateDispatcher ().setStrict (true)
                                                                               .setCustomizationID ("abc")
-                                                                              .setProfileID ("def");
+                                                                              .setProfileID ("def")
+                                                                              .setCreditNoteIDOnlyReferenceHandling (ECreditNoteIDOnlyReferenceHandling.PROJECT);
     for (final EEN16931SyntaxKind eSyntaxKind : EEN16931SyntaxKind.values ())
     {
       final AbstractEN16931Updater <?> aUpdater = aDispatcher.createUpdater (eSyntaxKind);
@@ -205,6 +206,7 @@ public final class EN16931UpdateDispatcherTest
       assertTrue (aUpdater.isStrict ());
       assertEquals ("abc", aUpdater.getCustomizationID ());
       assertEquals ("def", aUpdater.getProfileID ());
+      assertEquals (ECreditNoteIDOnlyReferenceHandling.PROJECT, aUpdater.getCreditNoteIDOnlyReferenceHandling ());
     }
     assertFalse (new EN16931UpdateDispatcher ().createUpdater (EEN16931SyntaxKind.CII).isStrict ());
   }

@@ -1,13 +1,11 @@
 # What is really left
 
-State as of 2026-11-09: plan items A0–A6 are done (see `plan-1.0.0.md` §10). The dispatcher, the CII updater and the UBL Invoice updater
-exist; the UBL Credit Note updater is a skeleton that applies **no rule yet**; the CLI is a stub.
+State as of 2026-11-09: plan items A0–A7 are done (see `plan-1.0.0.md` §10). All three updaters and the dispatcher exist and apply rules R1–R7, R9, C1, C2; the CLI is a stub.
 
 ## 1. Work items (in order)
 
 | Item | What | Depends on |
 |------|------|------------|
-| **A7** | UBL Credit Note updater: everything of A6 (the shared base class exists) plus R4, R5 and `--cn-id-only-reference` | A6 |
 | **A8** | Hardening: XXE/DTD test, idempotence, `ext:UBLExtensions` and attachment probes, `@listID` default trap, huge-file smoke | A5–A7 |
 | **A9** | Preservation test over the whole corpus (only rule-named differences allowed; `xsi:schemaLocation` is the one documented exception); 2017 Schematron on the **inputs** | A5–A7 |
 | **A10** | Coverage guard: every ID in `update-rules.md` §5 classified; fails on an unclassified row | A5–A7 |
