@@ -161,7 +161,7 @@ item, **only when asked** (global rule), prefixed `[1.0.0 A<n>]`.
 
 ### Phase 3 — Verification
 
-- [ ] **A9 — Preservation test (D6c)** for CII and both UBL kinds: diff input vs output over the
+- [x] **A9 — Preservation test (D6c)** for CII and both UBL kinds: diff input vs output over the
   whole corpus; the only differences allowed are those named by a rule R1–R8. Unexpected loss or
   change fails the test. Also run `phive-rules-en16931` on the 2017 inputs to confirm the corpus is
   itself conformant.
@@ -379,3 +379,26 @@ Still unverified assumption: UBL 2.5 `cbc:DueDate` sits between `IssueTime` and 
 - **Large document**: 4000 lines / 5.3 MB read, updated, written and validated in about 0.4 s.
 Two test inputs of mine were wrong at first (`ext:ID` must be `cbc:ID`; the base invoice has several lines) — the
 code was not at fault there. 51 tests in total.
+
+### A9 — preservation test and input conformance (2026-11-09)
+
+**Preservation** (`PreservationTest`, `XMLDiffer`): each of the 121 corpus inputs plus one hand-built Invoice (every
+Invoice rule) and one hand-built Credit Note (R4) is updated and compared with the output element by element.
+Every difference must match an entry of a **rule-tagged allow list** (path + kind), and per rule the number of
+differences must equal the number of rewrites the updater **reported** (R1: exactly one BT-24 text change; R6, R9:
+text changes; R7: added elements; R2, R3, R4: one element lost and one added per rewrite; C1, C2, R5: must change
+nothing). So nothing is lost silently and nothing is reported without a change. The one non-rule difference is the
+dropped `xsi:schemaLocation` (A0). A damage test proves the check can fail (changed text, changed text, lost
+element, added attribute); two injected bugs (R2 also dropping the buyer party, an extra `setIssueDate(null)`) are caught.
+Limit: **added subtrees are not compared** by this test (only that they exist) — the content of moved elements
+(R2, R3, R4, R7) is covered by the per-rule XPath tests of A5–A7. The differ pairs same-named siblings by position,
+which is exact because every rule removes all or the last of a kind; it had a flaw of its own (a lost duplicate
+reported a bogus order change) that its self-test found.
+
+**2017 Schematron on the inputs** (`CorpusConformanceTest`, phive-rules-en16931 4.6.4, artefacts 1.3.17, test
+scope): **88 of 121 inputs are valid — all 18 UBL, but only 70 of the 103 CII files.** The 33 invalid CII files are old
+test inputs of the sibling projects (BR-53 in 20 XRechnung 1.2.2 files, CII-SR-461 "only one TaxPointDate" in 6, BR-CL-06
+in 5, BR-27, CII-DT-097 and the 21 errors of `CII_example1a`). The updater preserves them as they are. The numbers
+are pinned; if they change, the Schematron version changed. The Schematron is deliberately **not** run on the
+outputs: its first step is the 2017 XSD, which an updated document fails by design (checked: 79 of the 88 outputs are
+rejected by it, all because of 2026-only elements like `ram:BuyerReferenceID` or `cac:Annotation`). 62 tests in total.
