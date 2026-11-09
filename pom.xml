@@ -26,7 +26,7 @@
     <version>3.1.0</version>
   </parent>
   <artifactId>en16931-update-parent-pom</artifactId>
-  <version>0.9.0</version>
+  <version>0.9.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>en16931-update-parent-pom</name>
   <inceptionYear>2026</inceptionYear>
@@ -44,7 +44,7 @@
     <connection>scm:git:https://github.com/phax/en16931-update.git</connection>
     <developerConnection>scm:git:https://github.com/phax/en16931-update.git</developerConnection>
     <url>https://github.com/phax/en16931-update</url>
-    <tag>en16931-update-parent-pom-0.9.0</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <developers>

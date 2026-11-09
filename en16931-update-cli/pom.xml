@@ -23,7 +23,7 @@
   <parent>
     <groupId>com.helger</groupId>
     <artifactId>en16931-update-parent-pom</artifactId>
-    <version>0.9.0</version>
+    <version>0.9.1-SNAPSHOT</version>
   </parent>
   <artifactId>en16931-update-cli</artifactId>
   <packaging>jar</packaging>
