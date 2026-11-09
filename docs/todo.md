@@ -1,13 +1,12 @@
 # What is really left
 
-State as of 2026-11-06: plan items A0–A3 are done (see `plan-1.0.0.md` §10). No update logic exists yet;
-the CLI is a stub. Nothing is committed from this session.
+State as of 2026-11-09: plan items A0–A4 are done (see `plan-1.0.0.md` §10). The dispatcher and three
+updater skeletons exist but apply **no rule yet** (BT-24 of the output is still the 2017 value); the CLI is a stub. Nothing is committed from this session.
 
 ## 1. Work items (in order)
 
 | Item | What | Depends on |
 |------|------|------------|
-| **A4** | `AbstractEN16931Updater`, rule-report type, `EN16931UpdateDispatcher` (edition + syntax kind from basics, already-2026 → skip, missing/unknown BT-24, not well-formed, unsupported root), `EN16931Updaters` lookup | nothing |
 | **A5** | CII updater: R1, R2; C1/C2 checks | A4 |
 | **A6** | UBL Invoice updater: R1, R2, R3, R6, R7, R9; C1/C2 | A4 |
 | **A7** | UBL Credit Note updater: A6 plus R4, R5, `--cn-id-only-reference` | A4, A6 |
@@ -19,7 +18,7 @@ the CLI is a stub. Nothing is committed from this session.
 
 ## 2. Prerequisites not done yet
 
-- **Test resources are not copied.** The 103 CII D16B and 18 UBL 2.1 files still sit in the sibling repos.
+- ~~Test resources are not copied.~~ Done in A4 (121 files).
 - **Hand-written inputs are missing** for: UBL header `cbc:Note` with `#code#` prefix (R3), non-`VAT`
   `TaxScheme/ID` (R6), `cbc:UBLVersionID` (R9), Credit Note with ID-only `AdditionalDocumentReference` (R5/Q7),
   `ext:UBLExtensions`, embedded attachments. The corpus has none of these.
@@ -47,9 +46,6 @@ the CLI is a stub. Nothing is committed from this session.
 
 ## 5. Housekeeping / decisions for you
 
-- `plan-1.0.0.md` §3 and §4 (Q3) still describe the scheme-ID checks as "error, write nothing". Superseded by
-  Q8 (warn, `--strict` = error) — the plan text should be corrected.
-- `plan-1.0.0.md` §10 (A2) says the input corpus is "copied as test resources"; it is not yet (see §2).
 - Keep or delete `.github/workflows/release-to-slack.yml` (copied from the siblings).
 - `en16931-basics`: once Q9 is answered, the two scheme literals belong there, not here.
 - GitHub repo `phax/en16931-update` and Maven Central coordinates are assumed in the poms; nothing was created.

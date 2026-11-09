@@ -51,7 +51,7 @@ shape in both). The real work is much smaller than the 284-row size of the 2026 
 **Checks required (2026 made a sub-identifier mandatory that 2017 left optional) — cardinality 0..1 → 1..1:**
 BT-29-1, BT-30-1, BT-46-1, BT-47-1, BT-60-1, BT-61-1, BT-71-1, BT-125-2.
 An input with an ID but no `@schemeID` **cannot be upgraded without inventing data** → ErrorList
-entry (see Q3), never a silent guess.
+entry, never a silent guess. **Superseded by Q8 (2026-11-06): warning, element left as it is; `--strict` = error** — see `update-rules.md` §2/§3.
 
 **Relaxations (nothing to do):** BT-34 / BT-49 endpoint 1..1→0..1, BT-117, BT-160, BT-91
 `ProprietaryID` alternative, BT-41/BT-56 `DepartmentName` alternative, BT-161 `ValueMeasure`.
@@ -69,7 +69,7 @@ or rules. No 2026 Schematron was available when 4.0.0 was written; check whether
 |---|----------|--------|
 | Q1 | Preserve or purify? | **Preserve everything** schema-valid in the input (XRechnung extras, `PaymentChannelCode`, UBL extensions, attachments). Purification stays the job of `en16931-purifier`. |
 | Q2 | BT-24 suffix (82 of 103 corpus files carry `#compliant#…`) | **Replace only the `urn:cen.eu:en16931:2017` prefix**, keep the suffix, warn that the CIUS is not 2026-aware; `--customization-id` / `--profile-id` overrides. |
-| Q3 | Missing mandatory scheme IDs (8 checks) and ambiguous R5 | **Error + no output** by default; `--lenient` downgrades to a warning and leaves the element untouched. R5: move only when unambiguous, otherwise warn. |
+| Q3 | Missing mandatory scheme IDs (8 checks) and ambiguous R5 | ~~Error + no output by default; `--lenient` downgrades~~ **Superseded by Q8/Q7** (see §10): default is *warning, element untouched*, `--strict` makes it an error; R5 follows `--cn-id-only-reference` (default `keep`). |
 | Q4 | Input already EN 2026? | **Skip** (warn, no output / unchanged). `--on-2026 copy\|skip\|fail` stays as the switch, default `skip`. |
 | Q5 | Names | `en16931-update` / `en16931-update-cli`, package `com.helger.en16931.update`, `1.0.0-SNAPSHOT`, repo `phax/en16931-update`. |
 | Q6 | Oracle dependencies | Both siblings are released, **but the updater does not depend on them** — not even in test scope. The commutativity oracle is dropped (see D6). |
@@ -144,7 +144,7 @@ item, **only when asked** (global rule), prefixed `[1.0.0 A<n>]`.
 
 - [x] **A3 — Project scaffolding** · **done 2026-11-06**: parent pom, two modules, license header plugin, `.gitignore`,
   CI workflow copied from siblings, `UpdateVersion`, CLAUDE.md. Compiles, empty tests green.
-- [ ] **A4 — Core API**: `AbstractEN16931Updater`, rule-report type, `EN16931UpdateDispatcher`
+- [x] **A4 — Core API** · **done 2026-11-09**: `AbstractEN16931Updater`, rule-report type, `EN16931UpdateDispatcher`
   detection + routing (edition, syntax kind, already-2026 handling Q4), error cases (BT-24 missing,
   unknown edition, not-well-formed, unsupported root) — unit tested without any rewrite logic.
 
@@ -171,7 +171,7 @@ item, **only when asked** (global rule), prefixed `[1.0.0 A<n>]`.
 ### Phase 4 — CLI and docs
 
 - [ ] **A11 — CLI**: `-t/--target`, `--output-suffix` (default `-2026`), `--en-version`-style
-  override, `--on-2026`, `--lenient`, `--customization-id`, `--profile-id`, `--verbose`,
+  override, `--on-2026`, `--strict`, `--cn-id-only-reference`, `--customization-id`, `--profile-id`, `--verbose`,
   `--disable-wildcard-expansion`, `source files 1..*` — mirroring the sibling options exactly.
   **Don't** repeat the sibling NPE with unset optional values (4.4f). `_test.sh` / `_test.cmd`.
 - [ ] **A12 — Docs**: README (usage, CLI, rules table, limits), News and noteworthy
@@ -280,3 +280,19 @@ test, picocli stub `EN16931UpdateCLI` (`--help`/`--version` only), license templ
 (copied from the siblings; the `release-to-slack` workflow was copied too - drop it if not wanted), README
 with News and noteworthy, CLAUDE.md. `mvn clean install` is green (1 test); the shaded jar runs.
 The existing `.gitignore` was replaced by the siblings' (superset of the old content).
+
+### A4 — core API (2026-11-09)
+
+Added to `com.helger.en16931.update`: `EUpdateRule` (R1–R7, R9, C1, C2), `EAlready2026Handling`
+(`skip` default / `copy` / `fail`), `EUpdateStatus`, `UpdateResult`, `AbstractEN16931UpdaterBase`
+(settings `strict`, `customizationID`, `profileID`; `reportApplied` = info with the rule ID as error ID,
+`reportWarning`, `reportCheckFailure` = error if strict else warning), `AbstractEN16931Updater`,
+`EN16931UpdateDispatcher` (syntax kind from root element, source edition from BT-24 or forced, routing,
+`writeDocument`), and the three updater **skeletons** (`cii.CIID16BToCIID25AUpdater`,
+`ubl.UBL21InvoiceToUBL25InvoiceUpdater`, `ubl.UBL21CreditNoteToUBL25CreditNoteUpdater`) that only read with
+the 2026 model — **no rule is applied yet, so BT-24 of the output is still the 2017 value** until A5–A7.
+15 tests green (routing of all three kinds + schema-validated write, skip/copy/fail, missing BT-24,
+forced edition on a legacy ZUGFeRD file, unsupported root, missing file, schema-invalid input rejected,
+settings handed over).
+The full corpus (103 CII + 18 UBL) was copied to `en16931-update/src/test/resources` (7.7 MB).
+A test caught one defect on the way: the skip warning passed a `null` rule (NPE).
