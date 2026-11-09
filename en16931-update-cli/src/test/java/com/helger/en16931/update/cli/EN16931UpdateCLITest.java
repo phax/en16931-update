@@ -40,7 +40,7 @@ import picocli.CommandLine;
  */
 public final class EN16931UpdateCLITest
 {
-  private static final String DIR = "src/test/resources/cli/";
+  private static final String DIR = "src/test/resources/external/cli/";
   private static final String ID_2017 = "urn:cen.eu:en16931:2017";
   private static final String ID_2026 = "urn:cen.eu:en16931:2026";
 
