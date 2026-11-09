@@ -1,12 +1,11 @@
 # What is really left
 
-State as of 2026-11-09: plan items A0–A9 are done (see `plan-1.0.0.md` §10). All three updaters and the dispatcher exist and apply rules R1–R7, R9, C1, C2; the CLI is a stub.
+State as of 2026-11-09: plan items A0–A10 are done (see `plan-1.0.0.md` §10). All three updaters and the dispatcher exist and apply rules R1–R7, R9, C1, C2; the CLI is a stub.
 
 ## 1. Work items (in order)
 
 | Item | What | Depends on |
 |------|------|------------|
-| **A10** | Coverage guard: every ID in `update-rules.md` §5 classified; fails on an unclassified row | A5–A7 |
 | **A11** | Real CLI: `-t/--target`, `--output-suffix` (default `-2026`), `--en-version`-style override, `--on-2026 copy\|skip\|fail` (default `skip`), `--strict`, `--cn-id-only-reference`, `--customization-id`, `--profile-id`, `--verbose`, `--disable-wildcard-expansion`, `source files 1..*`; `_test.sh`/`_test.cmd`; do not repeat the sibling NPE on unset optional values | A4–A7 |
 | **A12** | README (usage, rules table, limits), News and noteworthy, CLAUDE.md status, `@since 1.0.0` | all |
 
@@ -18,7 +17,6 @@ State as of 2026-11-09: plan items A0–A9 are done (see `plan-1.0.0.md` §10). 
   `ext:UBLExtensions`, embedded attachments. The corpus has none of these.
 - `phive-rules-en16931` 4.6.4 is a test dependency now. `ph-cii-d16b` / `ph-ubl21` were **not** needed: the
   preservation test compares XML, not models.
-- The A0 round-trip harness exists only in the session scratchpad; it is the starting point for A9.
 
 ## 3. Open questions
 

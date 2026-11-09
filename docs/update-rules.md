@@ -5,11 +5,14 @@ Derived 2026-11-06 (plan item A1) from `en16931-cii2ubl/docs/en16931-2017-syntax
 `en16931-ubl2cii` (18 UBL 2.1 files, 3 of them Credit Notes). Paths follow the mapping documents:
 UBL relative to `/Invoice` resp. `/CreditNote`, CII relative to `/rsm:CrossIndustryInvoice`.
 
+**Sources.** `en16931-2017-syntax.md` and `en16931-2026-syntax.md` in this folder are verbatim copies of the
+files of the same name in `en16931-cii2ubl/docs/` (commit `9960b78`); the `MappingCoverageTest` reads them.
+
 **Method.** All rows with an ID present in both documents were compared column by column; textual
 differences were then triaged by hand into *notation only* (e.g. the 2026 table prints `cac:Party/…`
 and `[@format='102']` explicitly) and *real*. Rows only in 2026 were triaged into *implicit* (the
 element or discriminator already had to exist in a conformant 2017 document) and *new*. Counts below
-are from the classification table at the end — 299 distinct IDs, 12 of which are discriminator notes.
+are from the classification table at the end — 299 distinct IDs, 14 of which are discriminator notes.
 
 ## 1. Rewrites
 
@@ -360,10 +363,10 @@ every REWRITE and CHECK row; A10 turns this table into a coverage guard.
 | BG-20 allowance vs BG-21 charge (document level) | cac:AllowanceCharge/cbc:ChargeIndicator: false (BG-20-1) vs true (BG-21-1) | ram:SpecifiedTradeAllowanceCharge/ram:ChargeIndicator/udt:Indicator: false vs true | NOTE |
 | BG-27 allowance vs BG-28 charge (line level) | same indicator on cac:InvoiceLine/cac:AllowanceCharge (BG-27-1 / BG-28-1) | same indicator on ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeAllowanceCharge | NOTE |
 | BT-147 price discount vs BT-148 gross price | cac:Price/cac:AllowanceCharge with cbc:ChargeIndicator = false (BT-147-1, BT-148-1); BT-147 = cbc:Amount, BT-148 = cbc:BaseAmount | separate elements: BT-147 = ram:GrossPriceProductTradePrice/ram:AppliedTradeAllowanceCharge/ram:ActualAmount (indicator false, BT-147-1), BT-148 = ram:GrossPriceProductTradePrice/ram:ChargeAmount | NOTE |
-| BT-17 vs BT-18 vs BG-24 | three separate containers: cac:OriginatorDocumentReference (BT-17); cac:AdditionalDocumentReference with cbc:DocumentTypeCode = 130 (BT-18, via BT-18-2); cac:AdditionalDocumentReference with cbc:DocumentTypeCode = 916 (BG-24, via BT-122-1) | one container ram:AdditionalReferencedDocument, ram:TypeCode: 50 (BT-17, via BT-17-1), 130 (BT-18), 916 (BG-24) | CARRIED |
+| BT-17 vs BT-18 vs BG-24 | three separate containers: cac:OriginatorDocumentReference (BT-17); cac:AdditionalDocumentReference with cbc:DocumentTypeCode = 130 (BT-18, via BT-18-2); cac:AdditionalDocumentReference with cbc:DocumentTypeCode = 916 (BG-24, via BT-122-1) | one container ram:AdditionalReferencedDocument, ram:TypeCode: 50 (BT-17, via BT-17-1), 130 (BT-18), 916 (BG-24) | NOTE |
 | BT-31 Seller VAT ID vs BT-32 Seller tax registration ID | cac:PartyTaxScheme/cac:TaxScheme/cbc:ID: VAT (BT-31-2) vs LOC (BT-32-2) — **changed in 2026**, 2017 used != 'VAT' for BT-32 | ram:SpecifiedTaxRegistration/ram:ID/@schemeID: VA (BT-31-1) vs FC (BT-32-1) | NOTE |
 | BT-48 / BT-63 VAT identifiers | cac:PartyTaxScheme/cac:TaxScheme/cbc:ID = VAT (BT-48-2 / BT-63-2) | @schemeID = VA (BT-48-1 / BT-63-1) | NOTE |
-| BT-110 vs BT-111 (VAT amounts) | two cac:TaxTotal/cbc:TaxAmount elements, distinguished by @currencyID: BT-5 (BT-110-1) vs BT-6 (BT-111-1) | two ram:TaxTotalAmount elements, same @currencyID distinction | CARRIED |
+| BT-110 vs BT-111 (VAT amounts) | two cac:TaxTotal/cbc:TaxAmount elements, distinguished by @currencyID: BT-5 (BT-110-1) vs BT-6 (BT-111-1) | two ram:TaxTotalAmount elements, same @currencyID distinction | NOTE |
 | BT-105 charge reason code vs BT-177 non-VAT tax code | both cac:AllowanceCharge/cbc:AllowanceChargeReasonCode; BT-177 carries @listID = 5153 (BT-177-1, UNTDID 5153), BT-105 uses UNTDID 7161 | both ram:ReasonCode; BT-177 written as ram:ReasonCode[.!='VAT']; rules CII-DT-100/101 require @listID and @listAgencyID on BT-177 | NOTE |
 | BT-145 line charge reason code vs BT-193 line non-VAT tax code | both cac:InvoiceLine/cac:AllowanceCharge/cbc:AllowanceChargeReasonCode; BT-193 via @listID (BT-193-1) | both ram:ReasonCode; rules CII-DT-102/103 require @listID and @listAgencyID on BT-193 | NOTE |
 | BT-2 issue date vs BT-166 issue time | separate cbc:IssueDate and cbc:IssueTime | **one** ram:IssueDateTime/udt:DateTimeString; @format = 102 (date only, BT-2-1) or 208 (date and time, BT-166-1) | NOTE |

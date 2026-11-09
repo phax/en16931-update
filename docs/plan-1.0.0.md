@@ -165,7 +165,7 @@ item, **only when asked** (global rule), prefixed `[1.0.0 A<n>]`.
   whole corpus; the only differences allowed are those named by a rule R1–R8. Unexpected loss or
   change fails the test. Also run `phive-rules-en16931` on the 2017 inputs to confirm the corpus is
   itself conformant.
-- [ ] **A10 — Coverage guard**: every row of `en16931-2026-syntax.md` is classified in
+- [x] **A10 — Coverage guard**: every row of `en16931-2026-syntax.md` is classified in
   `update-rules.md`; test fails if a row is unclassified. Prevents the BT-122-1 miss.
 
 ### Phase 4 — CLI and docs
@@ -402,3 +402,19 @@ in 5, BR-27, CII-DT-097 and the 21 errors of `CII_example1a`). The updater prese
 are pinned; if they change, the Schematron version changed. The Schematron is deliberately **not** run on the
 outputs: its first step is the 2017 XSD, which an updated document fails by design (checked: 79 of the 88 outputs are
 rejected by it, all because of 2026-only elements like `ram:BuyerReferenceID` or `cac:Annotation`). 62 tests in total.
+
+### A10 — coverage guard (2026-11-09)
+
+`MappingCoverageTest` reads the two mapping tables (copied into `docs/`, provenance in `update-rules.md`) and the
+classification of `update-rules.md` §5, and fails unless: every ID of the 2026 table is classified and nothing else
+is; every class is valid and names an existing `EUpdateRule`; an ID of the 2017 table is never NEW/IMPLICIT and one that
+is not in it is never CARRIED (BG-1..BG-32 and the notes excepted); every REWRITE/CHECK ID is **named in the code** of the
+updaters (exact match — BT-9 is not satisfied by BT-91 or BT-9-1) and no NEW ID is; every `EUpdateRule` (R9 excepted, it
+has no row) is used in the table and described in the rule document. The checking function is separate and has five
+self-tests with deliberately broken inputs; probes against the real files (row removed, NEW turned REWRITE without code)
+fail as intended.
+
+**Found immediately:** two discriminator rows that exist in both tables (`BT-17 vs BT-18 vs BG-24`,
+`BT-110 vs BT-111`) were wrongly labelled CARRIED instead of NOTE — fixed (CARRIED 160, NOTE 14).
+Limits: "named in the code" is satisfied by a javadoc mention, so the guard proves the ID was *considered*, not that a test
+covers it — the per-rule tests of A5–A7 and the preservation test do that. 68 tests in total.

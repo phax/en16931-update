@@ -234,7 +234,8 @@ public abstract class AbstractUBL21ToUBL25Updater <IMPLTYPE extends AbstractUBL2
   }
 
   /**
-   * Rule R7: BG-24 gets the fixed document type code <code>916</code>.
+   * Rule R7: BG-24 gets the fixed document type code <code>916</code> (BT-122-1) with the list
+   * identifier <code>1001</code> (BT-122-1-1).
    *
    * @param aRef
    *        The <code>cac:AdditionalDocumentReference</code>. May not be <code>null</code>.
@@ -277,7 +278,8 @@ public abstract class AbstractUBL21ToUBL25Updater <IMPLTYPE extends AbstractUBL2
   }
 
   /**
-   * Check C1 on the Seller, Buyer, Payee and the delivery location.
+   * Check C1 on the Seller, Buyer, Payee and the delivery location. In EN 16931:2026 the scheme
+   * identifiers BT-29-1, BT-30-1, BT-46-1, BT-47-1, BT-60-1, BT-61-1 and BT-71-1 are mandatory.
    *
    * @param aErrorList
    *        The error list. May not be <code>null</code>.

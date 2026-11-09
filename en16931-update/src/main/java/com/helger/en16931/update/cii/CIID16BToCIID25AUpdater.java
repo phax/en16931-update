@@ -50,7 +50,8 @@ import un.unece.uncefact.data.standard.cii.d25a.udt.TextType;
  * <ul>
  * <li>R1 - BT-24 (and an optional BT-23 override)</li>
  * <li>R2 - BT-10 <code>ram:BuyerReference</code> becomes <code>ram:BuyerReferenceID</code></li>
- * <li>C1 - party identifiers without a scheme identifier - reported, never changed</li>
+ * <li>C1 - party identifiers without a scheme identifier (BT-29-1, BT-30-1, BT-46-1, BT-47-1, BT-60-1,
+ * BT-61-1, BT-71-1) - reported, never changed</li>
  * <li>C2 - attached documents without a filename - reported, never changed</li>
  * </ul>
  * R3, R4, R5, R6, R7 and R9 do not apply to CII.
